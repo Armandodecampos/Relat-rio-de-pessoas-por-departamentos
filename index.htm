@@ -359,85 +359,103 @@ font-size:22px;
   }
 
   function processarDados(data) {
-    // Processar relatório de pessoas
-    const ultimoRegistroPorId = {};
-    const header = data[0] || [];
+  // Processar relatório de pessoas
+  const ultimoRegistroPorId = {};
+  const header = data[0] || [];
 
-    for (let i = 1; i < data.length; i++) { // Começar da segunda linha (após o cabeçalho)
-      const linha = data[i];
-      const idPessoal = linha[6];
-      const dataHoraStr = linha[1];
-      const status = linha[3];
+  for (let i = 1; i < data.length; i++) { // Começar da segunda linha (após o cabeçalho)
+    const linha = data[i];
+    const idPessoal = linha[6];
+    const dataHoraStr = linha[1];
+    const status = linha[3];
+    const entradaSaidaColunaD = linha[3]; // Coluna D (índice 3)
 
-      if (idPessoal !== undefined && idPessoal !== '') {
-        if (dataHoraStr !== undefined && status !== undefined) {
-          const dataHora = new Date(dataHoraStr);
-          if (!isNaN(dataHora.getTime())) {
-            if (!ultimoRegistroPorId[idPessoal] || dataHora > ultimoRegistroPorId[idPessoal].dataHora) {
-              ultimoRegistroPorId[idPessoal] = { dataHora: dataHora, status: status.toLowerCase(), linha: linha };
-            }
+    if (idPessoal !== undefined && idPessoal !== '') {
+      if (dataHoraStr !== undefined && status !== undefined) {
+        const dataHora = new Date(dataHoraStr);
+        if (!isNaN(dataHora.getTime())) {
+          if (!ultimoRegistroPorId[idPessoal] || dataHora > ultimoRegistroPorId[idPessoal].dataHora) {
+            ultimoRegistroPorId[idPessoal] = {
+              dataHora: dataHora,
+              status: status ? status.toLowerCase() : '',
+              entradaSaidaColunaD: entradaSaidaColunaD ? entradaSaidaColunaD.toLowerCase() : '',
+              linha: linha
+            };
           }
         }
       }
     }
-
-    todosUltimosRegistros = [];
-    ultimosRegistrosLista.innerHTML = '';
-    const pessoasNoPredio = new Set();
-    const pessoasQueSairam = new Set();
-
-    for (const idPessoal in ultimoRegistroPorId) {
-      if (ultimoRegistroPorId.hasOwnProperty(idPessoal)) {
-        const ultimoRegistro = ultimoRegistroPorId[idPessoal];
-        const status = ultimoRegistro.status;
-        const linhaDados = ultimoRegistro.linha;
-        let registroTexto = `ID: ${idPessoal}, Status: ${status}`;
-        const registroObjeto = { idPessoal: idPessoal, status: status, dados: {} };
-
-        for (let j = 0; j < linhaDados.length; j++) {
-          if (linhaDados[j] !== undefined && linhaDados[j] !== '') {
-            const colunaNome = header[j] || `Coluna ${j + 1}`;
-            let valor = linhaDados[j];
-            if (j === 6 || j === 7 || j === 8) { // Colunas G (índice 6), H (índice 7), I (índice 8)
-              valor = `<strong>${valor}</strong>`;
-            }
-            registroTexto += `, ${colunaNome}: ${valor}`;
-            registroObjeto.dados[colunaNome] = linhaDados[j];
-          }
-        }
-
-        const registroDiv = document.createElement('div');
-        registroDiv.innerHTML = registroTexto; // Use innerHTML para renderizar o negrito
-        registroDiv.style.border = '2px solid #000';
-        registroDiv.style.padding = '8px';
-        registroDiv.style.borderRadius = '5px';
-        registroDiv.style.marginBottom = '5px';
-
-        if (status.includes('saida')) {
-          registroDiv.classList.add('saida');
-          pessoasQueSairam.add(idPessoal);
-        } else {
-          registroDiv.classList.add('entrada');
-          pessoasNoPredio.add(idPessoal);
-        }
-
-        ultimosRegistrosLista.appendChild(registroDiv);
-        todosUltimosRegistros.push({ div: registroDiv, texto: registroTexto.toLowerCase() });
-      }
-    }
-
-    pessoasNoPredioSpan.textContent = pessoasNoPredio.size;
-    pessoasQueSairamSpan.textContent = pessoasQueSairam.size;
-    totalPessoasSpan.textContent = pessoasNoPredio.size + pessoasQueSairam.size;
-    relatorioPessoasDiv.style.display = 'block';
-    searchInput.style.display = 'inline-block';
-
-    // Processar relatório de departamentos
-    gerarRelatorioDepartamentos(data);
-    relatorioDepartamentosDiv.style.display = 'block';
-    copyDepartmentReportButton.style.display = 'inline-block';
   }
 
+  todosUltimosRegistros = [];
+  ultimosRegistrosLista.innerHTML = '';
+  const pessoasNoPredio = new Set();
+  const pessoasQueSairam = new Set();
+
+  for (const idPessoal in ultimoRegistroPorId) {
+    if (ultimoRegistroPorId.hasOwnProperty(idPessoal)) {
+      const ultimoRegistro = ultimoRegistroPorId[idPessoal];
+      const status = ultimoRegistro.status;
+      const entradaSaidaColunaD = ultimoRegistro.entradaSaidaColunaD;
+      const linhaDados = ultimoRegistro.linha;
+      let registroTexto = `ID: ${idPessoal}, Status: ${status}`;
+      const registroDiv = document.createElement('div');
+      registroDiv.style.border = '2px solid #000';
+      registroDiv.style.padding = '8px';
+      registroDiv.style.borderRadius = '5px';
+      registroDiv.style.marginBottom = '5px';
+
+      for (let j = 0; j < linhaDados.length; j++) {
+        if (linhaDados[j] !== undefined && linhaDados[j] !== '') {
+          const colunaNome = header[j] || `Coluna ${j + 1}`;
+          let valor = linhaDados[j];
+          if (j === 6 || j === 7 || j === 8) { // Colunas G (índice 6), H (índice 7), I (índice 8)
+            valor = `<strong>${valor}</strong>`;
+          }
+          registroTexto += `, ${colunaNome}: ${valor}`;
+        }
+      }
+      registroDiv.innerHTML = registroTexto;
+
+      const isEntrada = entradaSaidaColunaD === 'entrada';
+      const isSaidaColunaD = entradaSaidaColunaD === 'facial.elev.blb02sa' ||
+                              entradaSaidaColunaD === 'facial.elev.2ss-said' ||
+                              entradaSaidaColunaD === 'facial.elev.bla.01sa' ||
+                              entradaSaidaColunaD === 'elevador -1b' ||
+                              entradaSaidaColunaD === 'elevador novo -1b' ||
+                              entradaSaidaColunaD === 'elevador-1a' ||
+                              entradaSaidaColunaD === 'facial.elev.blb.02' ||
+                              entradaSaidaColunaD === 'facial.elev.bla.02' ||
+                              entradaSaidaColunaD === 'facial.elev.bl.b.02';
+      const isSaidaStatus = status.includes('saida') || status.includes('sáida');
+
+      if (isSaidaColunaD || isSaidaStatus) {
+        registroDiv.classList.add('saida');
+        pessoasQueSairam.add(idPessoal);
+      } else if (isEntrada) {
+        registroDiv.classList.add('entrada');
+        pessoasNoPredio.add(idPessoal);
+      } else if (!isSaidaStatus) { // Se não for saída pelo status, consideramos entrada (padrão)
+        registroDiv.classList.add('entrada');
+        pessoasNoPredio.add(idPessoal);
+      }
+
+      ultimosRegistrosLista.appendChild(registroDiv);
+      todosUltimosRegistros.push({ div: registroDiv, texto: registroTexto.toLowerCase() });
+    }
+  }
+
+  pessoasNoPredioSpan.textContent = pessoasNoPredio.size;
+  pessoasQueSairamSpan.textContent = pessoasQueSairam.size;
+  totalPessoasSpan.textContent = pessoasNoPredio.size + pessoasQueSairam.size;
+  relatorioPessoasDiv.style.display = 'block';
+  searchInput.style.display = 'inline-block';
+
+  // Processar relatório de departamentos
+  gerarRelatorioDepartamentos(data);
+  relatorioDepartamentosDiv.style.display = 'block';
+  copyDepartmentReportButton.style.display = 'inline-block';
+}
   function gerarRelatorioDepartamentos(data) {
     const departamentosInicial = {};
     const departamentosAtualizado = {};
