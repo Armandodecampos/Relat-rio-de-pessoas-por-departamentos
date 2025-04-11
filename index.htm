@@ -279,7 +279,7 @@ font-size:22px;
   <h2>Relatório de pessoas que entraram e sairam do prédio</h2>
   <p>Pessoas que entraram: <span id="pessoasNoPredio">0</span></p>
   <p>Pessoas que sairam: <span id="pessoasQueSairam">0</span></p>
-  <p><strong>Total de Pessoas: <span id="totalPessoas">0</span></strong></p>
+  <p><strong>Total de pessoas: <span id="totalPessoas">0</span></strong></p>
   <br>
   <div>
     <input type="text" id="searchInput" placeholder="Pesquisar nos registros...">
@@ -420,13 +420,8 @@ font-size:22px;
       const isEntrada = entradaSaidaColunaD === 'entrada';
       const isSaidaColunaD = entradaSaidaColunaD === 'facial.elev.blb02sa' ||
                               entradaSaidaColunaD === 'facial.elev.2ss-said' ||
-                              entradaSaidaColunaD === 'facial.elev.bla.01sa' ||
-                              entradaSaidaColunaD === 'elevador -1b' ||
-                              entradaSaidaColunaD === 'elevador novo -1b' ||
-                              entradaSaidaColunaD === 'elevador-1a' ||
                               entradaSaidaColunaD === 'facial.elev.blb.02' ||
-                              entradaSaidaColunaD === 'facial.elev.bla.02' ||
-                              entradaSaidaColunaD === 'facial.elev.bl.b.02';
+                              entradaSaidaColunaD === 'facial.elev.bla.02';
       const isSaidaStatus = status.includes('saida') || status.includes('sáida');
 
       if (isSaidaColunaD || isSaidaStatus) {
