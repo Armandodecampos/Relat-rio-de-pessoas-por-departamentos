@@ -6,14 +6,14 @@
   /* Estilos gerais */
   body {
     font-family: sans-serif;
-    padding:30px;
+    padding: 30px;
   }
-  
+
   .conteudo {
-  margin:auto;
-  left:0;
-  right:0;
-  max-width:700px;
+    margin: auto;
+    left: 0;
+    right: 0;
+    max-width: 700px;
   }
 
   h1, h2, h3 {
@@ -72,7 +72,7 @@
     background-color: #d32f2f;
   }
 
-  #copyPersonReportButton, #copyDepartmentReportButton {
+  #copyPersonReportButton, #copyDepartmentReportButton, #copySpecialReportButton {
     background-color: #008CBA;
     color: white;
     display: none; /* Inicialmente oculto */
@@ -80,7 +80,7 @@
     margin-top: 10px;
   }
 
-  #copyPersonReportButton:hover, #copyDepartmentReportButton:hover {
+  #copyPersonReportButton:hover, #copyDepartmentReportButton:hover, #copySpecialReportButton:hover {
     background-color: #005f73;
   }
 
@@ -145,83 +145,84 @@
     display: none; /* Inicialmente oculto */
   }
 
-  #tabelaRelatorioDepartamentos1, #tabelaRelatorioDepartamentos2 {
+  #tabelaRelatorioDepartamentos1, #tabelaRelatorioDepartamentos2, #tabelaRelatorioDepartamentos3 {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
   }
 
   #tabelaRelatorioDepartamentos1 th, #tabelaRelatorioDepartamentos1 td,
-  #tabelaRelatorioDepartamentos2 th, #tabelaRelatorioDepartamentos2 td {
+  #tabelaRelatorioDepartamentos2 th, #tabelaRelatorioDepartamentos2 td,
+  #tabelaRelatorioDepartamentos3 th, #tabelaRelatorioDepartamentos3 td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
   }
 
-  #tabelaRelatorioDepartamentos1 th, #tabelaRelatorioDepartamentos2 th {
+  #tabelaRelatorioDepartamentos1 th, #tabelaRelatorioDepartamentos2 th, #tabelaRelatorioDepartamentos3 th {
     background-color: #f2f2f2;
     font-weight: bold;
   }
 
   #tabelaRelatorioDepartamentos1 tfoot th, #tabelaRelatorioDepartamentos1 tfoot td,
-  #tabelaRelatorioDepartamentos2 tfoot th, #tabelaRelatorioDepartamentos2 tfoot td {
+  #tabelaRelatorioDepartamentos2 tfoot th, #tabelaRelatorioDepartamentos2 tfoot td,
+  #tabelaRelatorioDepartamentos3 tfoot th, #tabelaRelatorioDepartamentos3 tfoot td {
     font-weight: bold;
     background-color: #eee;
   }
 
-  #relatorio1, #relatorio2 {
+  #relatorio1, #relatorio2, #relatorio3 {
     display: none; /* Removido, pois já está definido em #relatorioDepartamentos > h3 e table */
   }
-  
+
   #searchInput {
-  padding: 10px; /* Espaçamento interno para o texto */
-  margin-top: 10px; /* Margem acima do campo de pesquisa */
-  border: 2px solid #222; /* Borda cinza clara */
-  border-radius: 50px; /* Bordas arredondadas */
-  font-size:22px;
-  cursor: text; /* Altera o cursor para indicar que é um campo de texto */
-  width: 300px; /* Largura do campo de pesquisa (ajuste conforme necessário) */
-  display: inline-block; /* Permite que ele fique na mesma linha de outros elementos inline ou inline-block */
-  margin-right: 10px; /* Margem à direita do campo de pesquisa (para separá-lo de outros elementos) */
-  box-sizing: border-box; /* Garante que padding e border não aumentem a largura total */
-  padding:10px;
-  text-align:center;
-}
+    padding: 10px;
+    margin-top: 10px;
+    border: 2px solid #222;
+    border-radius: 50px;
+    font-size: 22px;
+    cursor: text;
+    width: 300px;
+    display: inline-block;
+    margin-right: 10px;
+    box-sizing: border-box;
+    text-align: center;
+  }
 
-#searchInput:focus {
-  outline: none; /* Remove a borda de foco padrão do navegador */
-  border-color: #007bff; /* Altera a cor da borda quando o campo está em foco (azul claro) */
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Adiciona uma sombra suave ao redor do campo em foco */
-}
+  #searchInput:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
 
-#searchInput::placeholder {
-font-size:22px;
-  color: #777; /* Cor do texto do placeholder */
-  font-style: italic; /* Estilo itálico para o placeholder */
-}
+  #searchInput::placeholder {
+    font-size: 22px;
+    color: #777;
+    font-style: italic;
+  }
 
-.legenda {
-  margin-top: 10px;
-  font-size: 14px;
-  color: #555;
-}
+  .legenda {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+  }
 
-.legenda span {
-  display: inline-block;
-  width: 15px;
-  height: 15px;
-  border: 1px solid #ccc;
-  margin-right: 5px;
-  vertical-align: middle;
-}
+  .legenda span {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border: 1px solid #ccc;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
 
-.legenda .entrada-cor {
-  background-color: #fff; /* Cor para "Dentro do prédio" (verde claro) */
-}
+  .legenda .entrada-cor {
+    background-color: #fff;
+  }
 
-.legenda .saida-cor {
-  background-color: #ffb4b4; /* Cor para "Fora do prédio" (vermelho claro) */
-}
+  .legenda .saida-cor {
+    background-color: #ffb4b4;
+  }
 </style>
 </head>
 <body>
@@ -235,7 +236,7 @@ font-size:22px;
 
 <div id="relatorioDepartamentos">
   <h2>Relatório de Departamentos</h2>
-  <h3>Relatório Inicial de Departamentos</h3>
+  <h3>Relatório de Departamentos Inicial</h3>
   <table id="tabelaRelatorioDepartamentos1">
     <thead>
       <tr>
@@ -253,7 +254,7 @@ font-size:22px;
     </tfoot>
   </table>
 
-  <h3>Relatório de Departamentos Atualizado</h3>
+  <h3>Relatório de Departamentos (Para o Global)</h3>
   <table id="tabelaRelatorioDepartamentos2">
     <thead>
       <tr>
@@ -270,7 +271,26 @@ font-size:22px;
       </tr>
     </tfoot>
   </table>
+
+  <h3>Relatório de Departamentos (Para o BEES)</h3>
+  <table id="tabelaRelatorioDepartamentos3">
+    <thead>
+      <tr>
+        <th>Departamento</th>
+        <th>Quantidade</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Total</th>
+        <th id="totalRelatorioDepartamentos3">0</th>
+      </tr>
+    </tfoot>
+  </table>
   <button id="copyDepartmentReportButton" onclick="copyDepartmentReportAsTable()">Copiar Relatório de Departamentos</button>
+  <button id="copySpecialReportButton" onclick="copySpecialReportAsTable()">Copiar Relatório Especial</button>
 </div>
 
 <button id="resetButton" onclick="resetPage()">Remover Arquivo e Relatórios</button>
@@ -286,11 +306,11 @@ font-size:22px;
   </div>
   <br>
   <div class="legenda">
-  Legenda:
-  Pessoas que entraram: <span class="entrada-cor"></span>
-  Pessoas que sairam: <span class="saida-cor"></span>
-</div>
-<br>
+    Legenda:
+    Pessoas que entraram: <span class="entrada-cor"></span>
+    Pessoas que sairam: <span class="saida-cor"></span>
+  </div>
+  <br>
   <div id="listaUltimosRegistros">
     <h3>Últimos Registros por ID Pessoal (Dados Completos):</h3>
     <div id="ultimosRegistrosLista"></div>
@@ -314,9 +334,14 @@ font-size:22px;
   const totalRelatorioDepartamentos1 = document.getElementById('totalRelatorioDepartamentos1');
   const tabelaRelatorioDepartamentos2Body = document.querySelector('#tabelaRelatorioDepartamentos2 tbody');
   const totalRelatorioDepartamentos2 = document.getElementById('totalRelatorioDepartamentos2');
+  const tabelaRelatorioDepartamentos3Body = document.querySelector('#tabelaRelatorioDepartamentos3 tbody');
+  const totalRelatorioDepartamentos3 = document.getElementById('totalRelatorioDepartamentos3');
 
   const resetButton = document.getElementById('resetButton');
   const copyDepartmentReportButton = document.getElementById('copyDepartmentReportButton');
+  const copySpecialReportButton = document.getElementById('copySpecialReportButton');
+  
+  
 
   let todosUltimosRegistros = [];
 
@@ -329,6 +354,7 @@ font-size:22px;
   relatorioPessoasDiv.style.display = 'none';
   relatorioDepartamentosDiv.style.display = 'none';
   copyDepartmentReportButton.style.display = 'none';
+  copySpecialReportButton.style.display = 'none';
   searchInput.style.display = 'none';
 
   function updateFileName() {
@@ -344,7 +370,7 @@ font-size:22px;
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = function(event) {
+      reader.onload = function (event) {
         const data = new Uint8Array(event.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
         const sheetName = workbook.SheetNames[0];
@@ -359,98 +385,100 @@ font-size:22px;
   }
 
   function processarDados(data) {
-  // Processar relatório de pessoas
-  const ultimoRegistroPorId = {};
-  const header = data[0] || [];
+    // Processar relatório de pessoas
+    const ultimoRegistroPorId = {};
+    const header = data[0] || [];
 
-  for (let i = 1; i < data.length; i++) { // Começar da segunda linha (após o cabeçalho)
-    const linha = data[i];
-    const idPessoal = linha[6];
-    const dataHoraStr = linha[1];
-    const status = linha[3];
-    const entradaSaidaColunaD = linha[3]; // Coluna D (índice 3)
+    for (let i = 1; i < data.length; i++) { // Começar da segunda linha (após o cabeçalho)
+      const linha = data[i];
+      const idPessoal = linha[6];
+      const dataHoraStr = linha[1];
+      const status = linha[3];
+      const entradaSaidaColunaD = linha[3]; // Coluna D (índice 3)
 
-    if (idPessoal !== undefined && idPessoal !== '') {
-      if (dataHoraStr !== undefined && status !== undefined) {
-        const dataHora = new Date(dataHoraStr);
-        if (!isNaN(dataHora.getTime())) {
-          if (!ultimoRegistroPorId[idPessoal] || dataHora > ultimoRegistroPorId[idPessoal].dataHora) {
-            ultimoRegistroPorId[idPessoal] = {
-              dataHora: dataHora,
-              status: status ? status.toLowerCase() : '',
-              entradaSaidaColunaD: entradaSaidaColunaD ? entradaSaidaColunaD.toLowerCase() : '',
-              linha: linha
-            };
+      if (idPessoal !== undefined && idPessoal !== '') {
+        if (dataHoraStr !== undefined && status !== undefined) {
+          const dataHora = new Date(dataHoraStr);
+          if (!isNaN(dataHora.getTime())) {
+            if (!ultimoRegistroPorId[idPessoal] || dataHora > ultimoRegistroPorId[idPessoal].dataHora) {
+              ultimoRegistroPorId[idPessoal] = {
+                dataHora: dataHora,
+                status: status ? status.toLowerCase() : '',
+                entradaSaidaColunaD: entradaSaidaColunaD ? entradaSaidaColunaD.toLowerCase() : '',
+                linha: linha
+              };
+            }
           }
         }
       }
     }
-  }
 
-  todosUltimosRegistros = [];
-  ultimosRegistrosLista.innerHTML = '';
-  const pessoasNoPredio = new Set();
-  const pessoasQueSairam = new Set();
+    todosUltimosRegistros = [];
+    ultimosRegistrosLista.innerHTML = '';
+    const pessoasNoPredio = new Set();
+    const pessoasQueSairam = new Set();
 
-  for (const idPessoal in ultimoRegistroPorId) {
-    if (ultimoRegistroPorId.hasOwnProperty(idPessoal)) {
-      const ultimoRegistro = ultimoRegistroPorId[idPessoal];
-      const status = ultimoRegistro.status;
-      const entradaSaidaColunaD = ultimoRegistro.entradaSaidaColunaD;
-      const linhaDados = ultimoRegistro.linha;
-      let registroTexto = `ID: ${idPessoal}, Status: ${status}`;
-      const registroDiv = document.createElement('div');
-      registroDiv.style.border = '2px solid #000';
-      registroDiv.style.padding = '8px';
-      registroDiv.style.borderRadius = '5px';
-      registroDiv.style.marginBottom = '5px';
+    for (const idPessoal in ultimoRegistroPorId) {
+      if (ultimoRegistroPorId.hasOwnProperty(idPessoal)) {
+        const ultimoRegistro = ultimoRegistroPorId[idPessoal];
+        const status = ultimoRegistro.status;
+        const entradaSaidaColunaD = ultimoRegistro.entradaSaidaColunaD;
+        const linhaDados = ultimoRegistro.linha;
+        let registroTexto = `ID: ${idPessoal}, Status: ${status}`;
+        const registroDiv = document.createElement('div');
+        registroDiv.style.border = '2px solid #000';
+        registroDiv.style.padding = '8px';
+        registroDiv.style.borderRadius = '5px';
+        registroDiv.style.marginBottom = '5px';
 
-      for (let j = 0; j < linhaDados.length; j++) {
-        if (linhaDados[j] !== undefined && linhaDados[j] !== '') {
-          const colunaNome = header[j] || `Coluna ${j + 1}`;
-          let valor = linhaDados[j];
-          if (j === 6 || j === 7 || j === 8) { // Colunas G (índice 6), H (índice 7), I (índice 8)
-            valor = `<strong>${valor}</strong>`;
+        for (let j = 0; j < linhaDados.length; j++) {
+          if (linhaDados[j] !== undefined && linhaDados[j] !== '') {
+            const colunaNome = header[j] || `Coluna ${j + 1}`;
+            let valor = linhaDados[j];
+            if (j === 6 || j === 7 || j === 8) { // Colunas G (índice 6), H (índice 7), I (índice 8)
+              valor = `<strong>${valor}</strong>`;
+            }
+            registroTexto += `, ${colunaNome}: ${valor}`;
           }
-          registroTexto += `, ${colunaNome}: ${valor}`;
         }
+        registroDiv.innerHTML = registroTexto;
+
+        const isEntrada = entradaSaidaColunaD === 'entrada';
+        const isSaidaColunaD = entradaSaidaColunaD === 'facial.elev.blb02sa' ||
+          entradaSaidaColunaD === 'facial.elev.2ss-said' ||
+          entradaSaidaColunaD === 'facial.elev.blb.02' ||
+          entradaSaidaColunaD === 'facial.elev.bla.02';
+        const isSaidaStatus = status.includes('saida') || status.includes('sáida');
+
+        if (isSaidaColunaD || isSaidaStatus) {
+          registroDiv.classList.add('saida');
+          pessoasQueSairam.add(idPessoal);
+        } else if (isEntrada) {
+          registroDiv.classList.add('entrada');
+          pessoasNoPredio.add(idPessoal);
+        } else if (!isSaidaStatus) { // Se não for saída pelo status, consideramos entrada (padrão)
+          registroDiv.classList.add('entrada');
+          pessoasNoPredio.add(idPessoal);
+        }
+
+        ultimosRegistrosLista.appendChild(registroDiv);
+        todosUltimosRegistros.push({ div: registroDiv, texto: registroTexto.toLowerCase() });
       }
-      registroDiv.innerHTML = registroTexto;
-
-      const isEntrada = entradaSaidaColunaD === 'entrada';
-      const isSaidaColunaD = entradaSaidaColunaD === 'facial.elev.blb02sa' ||
-                              entradaSaidaColunaD === 'facial.elev.2ss-said' ||
-                              entradaSaidaColunaD === 'facial.elev.blb.02' ||
-                              entradaSaidaColunaD === 'facial.elev.bla.02';
-      const isSaidaStatus = status.includes('saida') || status.includes('sáida');
-
-      if (isSaidaColunaD || isSaidaStatus) {
-        registroDiv.classList.add('saida');
-        pessoasQueSairam.add(idPessoal);
-      } else if (isEntrada) {
-        registroDiv.classList.add('entrada');
-        pessoasNoPredio.add(idPessoal);
-      } else if (!isSaidaStatus) { // Se não for saída pelo status, consideramos entrada (padrão)
-        registroDiv.classList.add('entrada');
-        pessoasNoPredio.add(idPessoal);
-      }
-
-      ultimosRegistrosLista.appendChild(registroDiv);
-      todosUltimosRegistros.push({ div: registroDiv, texto: registroTexto.toLowerCase() });
     }
+
+    pessoasNoPredioSpan.textContent = pessoasNoPredio.size;
+    pessoasQueSairamSpan.textContent = pessoasQueSairam.size;
+    totalPessoasSpan.textContent = pessoasNoPredio.size + pessoasQueSairam.size;
+    relatorioPessoasDiv.style.display = 'block';
+    searchInput.style.display = 'inline-block';
+
+    // Processar relatório de departamentos
+    gerarRelatorioDepartamentos(data);
+    gerarRelatorioEspecial(data);
+    relatorioDepartamentosDiv.style.display = 'block';
+    copyDepartmentReportButton.style.display = 'inline-block';
+    copySpecialReportButton.style.display = 'inline-block';
   }
-
-  pessoasNoPredioSpan.textContent = pessoasNoPredio.size;
-  pessoasQueSairamSpan.textContent = pessoasQueSairam.size;
-  totalPessoasSpan.textContent = pessoasNoPredio.size + pessoasQueSairam.size;
-  relatorioPessoasDiv.style.display = 'block';
-  searchInput.style.display = 'inline-block';
-
-  // Processar relatório de departamentos
-  gerarRelatorioDepartamentos(data);
-  relatorioDepartamentosDiv.style.display = 'block';
-  copyDepartmentReportButton.style.display = 'inline-block';
-}
   function gerarRelatorioDepartamentos(data) {
     const departamentosInicial = {};
     const departamentosAtualizado = {};
@@ -468,7 +496,6 @@ font-size:22px;
       "Rafael Pacini": "AGT",
       "Sonia Fuscaldi": "AGT",
       "Sergio Vezza": "GROWTH",
-      "Other Units": "Outras Unidades",
       "Fabio Mazza": "AGT",
       "Ronaldo Fiorito": "AGT",
       "Marcelo Rentz": "AGT",
@@ -508,26 +535,72 @@ font-size:22px;
       }
     }
 
-    atualizarTabelaDepartamentos(departamentosInicial, tabelaRelatorioDepartamentos1Body, totalRelatorioDepartamentos1);
-    atualizarTabelaDepartamentos(departamentosAtualizado, tabelaRelatorioDepartamentos2Body, totalRelatorioDepartamentos2);
+    // Relatório 1 - Inicial (só o que tiver nos dados)
+atualizarTabelaDepartamentos(departamentosInicial, tabelaRelatorioDepartamentos1Body, totalRelatorioDepartamentos1);
+
+// Relatório 2 - Atualizado (força todos os departamentos da lista)
+atualizarTabelaDepartamentos(departamentosAtualizado, tabelaRelatorioDepartamentos2Body, totalRelatorioDepartamentos2, departamentosEsperadosAtualizado);
+
   }
 
-  function atualizarTabelaDepartamentos(dados, tabelaBody, totalElement) {
-    tabelaBody.innerHTML = '';
-    let total = 0;
-    for (const departamento in dados) {
-      if (dados.hasOwnProperty(departamento)) {
-        const quantidade = dados[departamento];
-        const row = tabelaBody.insertRow();
-        const departamentoCell = row.insertCell();
-        const quantidadeCell = row.insertCell();
-        departamentoCell.textContent = departamento;
-        quantidadeCell.textContent= quantidade;
-        total += quantidade;
+  function gerarRelatorioEspecial(data) {
+    const departamentosEspeciais = {};
+    const idsProcessadosDepartamentos = new Set();
+    const header = data[0] || [];
+    const departamentosInteresse = ["Sergio Vezza", "CDD Campinas", "Terceiros Growth"];
+
+    for (let i = 2; i < data.length; i++) {
+      const linha = data[i];
+      const idPessoal = linha[6];
+      let nomeDepartamento = linha[11];
+
+      if (idPessoal !== undefined && idPessoal !== '' && !idsProcessadosDepartamentos.has(idPessoal)) {
+        if (nomeDepartamento && departamentosInteresse.includes(nomeDepartamento)) {
+          departamentosEspeciais[nomeDepartamento] = (departamentosEspeciais[nomeDepartamento] || 0) + 1;
+          idsProcessadosDepartamentos.add(idPessoal);
+        }
       }
     }
-    totalElement.textContent = total;
+
+    atualizarTabelaDepartamentos(departamentosEspeciais, tabelaRelatorioDepartamentos3Body, totalRelatorioDepartamentos3, departamentosEsperadosEspecial);
+
   }
+  
+  const departamentosEsperadosInicial = []; // Aqui só serão exibidos os realmente presentes
+const departamentosEsperadosAtualizado = [
+  "AGT", "CDD", "CSC", "GROWTH", "Portaria virtual",
+  "Prestador de Serviços", "Visitante"
+];
+const departamentosEsperadosEspecial = [
+  "CDD Campinas", "Sergio Vezza", "Terceiros Growth"
+];
+
+
+  function atualizarTabelaDepartamentos(dados, tabelaBody, totalElement, listaDepartamentosEsperados = null) {
+  tabelaBody.innerHTML = '';
+  let total = 0;
+
+  let dadosParaUsar = dados;
+
+  if (listaDepartamentosEsperados) {
+    dadosParaUsar = {};
+    listaDepartamentosEsperados.forEach(dep => {
+      dadosParaUsar[dep] = dados[dep] || 0;
+    });
+  }
+
+  for (const departamento in dadosParaUsar) {
+    const quantidade = dadosParaUsar[departamento];
+    const row = tabelaBody.insertRow();
+    const departamentoCell = row.insertCell();
+    const quantidadeCell = row.insertCell();
+    departamentoCell.textContent = departamento;
+    quantidadeCell.textContent = quantidade;
+    total += quantidade;
+  }
+
+  totalElement.textContent = total;
+}
 
   function handleSearch() {
     const termoPesquisa = searchInput.value.toLowerCase();
@@ -548,6 +621,7 @@ font-size:22px;
     relatorioPessoasDiv.style.display = 'none'; // Oculta o relatório de pessoas
     relatorioDepartamentosDiv.style.display = 'none'; // Oculta o relatório de departamentos
     copyDepartmentReportButton.style.display = 'none'; // Oculta o botão de copiar do departamento
+    copySpecialReportButton.style.display = 'none';
     searchInput.style.display = 'none'; // Oculta o campo de pesquisa
     searchInput.value = ''; // Limpa o campo de pesquisa
     todosUltimosRegistros = []; // Limpa o array de registros de pessoas
@@ -566,6 +640,8 @@ font-size:22px;
     totalRelatorioDepartamentos1.textContent = '0';
     tabelaRelatorioDepartamentos2Body.innerHTML = '';
     totalRelatorioDepartamentos2.textContent = '0';
+    tabelaRelatorioDepartamentos3Body.innerHTML = '';
+    totalRelatorioDepartamentos3.textContent = '0';
   }
 
   function copyDepartmentReportAsTable() {
@@ -599,6 +675,41 @@ font-size:22px;
       })
       .catch(err => {
         console.error('Falha ao copiar o relatório de departamentos: ', err);
+        // Falha ao copiar (sem alerta)
+      });
+  }
+
+  function copySpecialReportAsTable() {
+    const tabela = document.getElementById('tabelaRelatorioDepartamentos3');
+    let textoParaCopiar = "";
+
+    // Adiciona as linhas do corpo
+    const rows = tabela.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+      const departamentoCell = row.querySelector('td:first-child');
+      const quantidadeCell = row.querySelector('td:last-child');
+      if (departamentoCell && quantidadeCell) {
+        textoParaCopiar += `${departamentoCell.textContent.trim()} = ${quantidadeCell.textContent.trim()}\n`;
+      }
+    });
+
+    // Adiciona a linha total
+    const totalRow = tabela.querySelector('tfoot tr');
+    if (totalRow) {
+      const totalLabelCell = totalRow.querySelector('th:first-child');
+      const totalValueCell = totalRow.querySelector('th:last-child');
+      if (totalLabelCell && totalValueCell) {
+        textoParaCopiar += `${totalLabelCell.textContent.trim()} = ${totalValueCell.textContent.trim()}`;
+      }
+    }
+
+    // Tenta copiar para a área de transferência
+    navigator.clipboard.writeText(textoParaCopiar)
+      .then(() => {
+        // Copiado com sucesso (sem alerta)
+      })
+      .catch(err => {
+        console.error('Falha ao copiar o relatório especial: ', err);
         // Falha ao copiar (sem alerta)
       });
   }
