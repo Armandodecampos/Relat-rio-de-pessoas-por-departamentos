@@ -367,6 +367,7 @@
     </tfoot>
   </table>
   <button id="copySergioVezzaReportButton" onclick="copySergioVezzaReportAsTable()">Copiar Relatório Sergio Vezza</button>
+  <button id="downloadSergioVezzaReportButton" onclick="downloadSergioVezzaReportAsExcel()">Baixar Relatório Sergio Vezza (Excel)</button>
 </div>
 </div>
 <script src="https://unpkg.com/xlsx/xlsx.js"></script>
@@ -888,6 +889,12 @@ function copySergioVezzaReportAsTable() {
     .catch(err => {
       console.error('Falha ao copiar o relatório Sergio Vezza: ', err);
     });
+}
+
+function downloadSergioVezzaReportAsExcel() {
+const tabela = document.getElementById('tabelaRelatorioSergioVezza');
+const wb = XLSX.utils.table_to_book(tabela, { sheet: "Relatório Sergio Vezza" });
+XLSX.writeFile(wb, "Relatorio_Sergio_Vezza.xlsx");
 }
 </script>
 </body>
