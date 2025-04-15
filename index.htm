@@ -826,21 +826,17 @@
   nomesOrdenados.forEach(pessoa => {
     const row = tabelaRelatorioSergioVezzaBody.insertRow();
     const nomeCompletoCell = row.insertCell();
-    // Transforma o nome no formato de capitalização
-    nomeCompletoCell.textContent = formatarNomeCapitalizacao(pessoa);
+    nomeCompletoCell.textContent = pessoa;
     total++;
   });
 
-  // Altera o texto da primeira célula do cabeçalho para "Nome:"
+  // Remove a segunda coluna (se existir)
   const headerRow = document.querySelector('#tabelaRelatorioSergioVezza thead tr');
   if (headerRow) {
-    headerRow.cells[0].textContent = 'Nome:';
-  }
-
-  // Remove a segunda coluna (se existir)
-  const headerCells = headerRow.querySelectorAll('th');
-  if (headerCells.length > 1) {
-    headerRow.deleteCell(1);
+    const headerCells = headerRow.querySelectorAll('th');
+    if (headerCells.length > 1) {
+      headerRow.deleteCell(1);
+    }
   }
 
   const dataRows = document.querySelectorAll('#tabelaRelatorioSergioVezza tbody tr');
@@ -860,7 +856,6 @@
     }
   }
 }
-
 function copySergioVezzaReportAsTable() {
   const tabela = document.getElementById('tabelaRelatorioSergioVezza');
   let textoParaCopiar = "";
@@ -879,8 +874,7 @@ function copySergioVezzaReportAsTable() {
   });
 
   nomesCompletos.forEach(nomeCompleto => {
-    // Transforma o nome no formato de capitalização
-    textoParaCopiar += `${formatarNomeCapitalizacao(nomeCompleto)}\n`;
+    textoParaCopiar += `${nomeCompleto}\n`;
   });
 
   const totalRow = tabela.querySelector('tfoot tr');
@@ -894,11 +888,6 @@ function copySergioVezzaReportAsTable() {
     .catch(err => {
       console.error('Falha ao copiar o relatório Sergio Vezza: ', err);
     });
-}
-
-// Função auxiliar para formatar o nome no formato de capitalização
-function formatarNomeCapitalizacao(nome) {
-  return nome.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
 }
 </script>
 </body>
