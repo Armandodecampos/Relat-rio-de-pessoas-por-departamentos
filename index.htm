@@ -353,15 +353,14 @@
   <table id="tabelaRelatorioSergioVezza">
     <thead>
       <tr>
-        <th>Nome Completo</th>
+        <th>Total de Pessoas: <span id="totalRelatorioSergioVezza">0</span></th>
       </tr>
     </thead>
     <tbody>
     </tbody>
     <tfoot>
       <tr>
-        <th>Total de Pessoas</th>
-        <th id="totalRelatorioSergioVezza">0</th>
+        <th></th>
       </tr>
     </tfoot>
   </table>
@@ -547,7 +546,7 @@
     const departamentosAtualizado = {};
     const idsProcessadosDepartamentos = new Set();
     const header = data[0] || [];
-    const modificacoes = {
+    const modificacoes = { // Aqui sseraõ os departamentos agrupados ou não.
       "Visitantes": "Visitante",
       "Ab-inbev": "AGT",
       "Prestador de Serviços": "Prestador de Serviços",
@@ -571,7 +570,9 @@
       "Alexandre Van Wonterghem": "AGT",
       "Keith Davies": "AGT",
       "Lojista - Feirinha": "Visitante",
-      "Terceiros Growth": "GROWTH"
+      "Terceiros Growth": "GROWTH",
+      "Tech": "GROWTH",
+      "Growth Group": "GROWTH",
     };
 
     for (let i = 2; i < data.length; i++) {
@@ -609,7 +610,7 @@
     const departamentosEspeciais = {};
     const idsProcessadosDepartamentos = new Set();
     const header = data[0] || [];
-    const departamentosInteresse = ["Sergio Vezza", "CDD Campinas", "Terceiros Growth"];
+    const departamentosInteresse = ["Sergio Vezza", "CDD Campinas", "Terceiros Growth", "Tech", "Growth Group"];
 
     for (let i = 2; i < data.length; i++) {
       const linha = data[i];
@@ -645,13 +646,15 @@
     atualizarTabelaSergioVezza(pessoasSergioVezza);
   }
 
-  const departamentosEsperadosInicial = []; // Aqui só serão exibidos os realmente presentes
+  const departamentosEsperadosInicial = []; // Aqui só serão exibidos os departamentos para o Rafael.
   const departamentosEsperadosAtualizado = [
     "AGT", "CDD", "CSC", "GROWTH", "Portaria virtual",
     "Prestador de Serviços", "Visitante"
   ];
-  const departamentosEsperadosEspecial = [
-    "CDD Campinas", "Sergio Vezza", "Terceiros Growth"
+  const departamentosEsperadosEspecial = [ // Aqui só serão exibidos os departamentos para o Patrick.
+    "CDD Campinas", "Sergio Vezza", "Terceiros Growth",
+    "Tech",
+    "Growth Group"
   ];
 
   function atualizarTabelaDepartamentos(dados, tabelaBody, totalElement, listaDepartamentosEsperados = null) {
@@ -682,19 +685,32 @@
 
   function atualizarTabelaSergioVezza(pessoas) {
     tabelaRelatorioSergioVezzaBody.innerHTML = '';
-    let total = 0;
+    let total = pessoas.size; // Obtém o total de pessoas do Set
 
-    pessoas.forEach(pessoa => {
-      const [nome, sobrenome] = pessoa.split(' ');
-      const row = tabelaRelatorioSergioVezzaBody.insertRow();
-      const nomeCell = row.insertCell();
-      const sobrenomeCell = row.insertCell();
-      nomeCell.textContent = nome;
-      sobrenomeCell.textContent = sobrenome;
-      total++;
+    // Atualiza o cabeçalho da tabela
+    const headerRow = document.querySelector('#tabelaRelatorioSergioVezza thead tr');
+    headerRow.innerHTML = `<th>Total de Pessoas: <span id="totalRelatorioSergioVezza">${total}</span></th>`;
+
+    const nomesOrdenados = Array.from(pessoas).sort(function (a, b) {
+      return a.localeCompare(b, undefined, { sensitivity: 'base' });
     });
 
-    totalRelatorioSergioVezza.textContent = total;
+    nomesOrdenados.forEach(pessoa => {
+      const row = tabelaRelatorioSergioVezzaBody.insertRow();
+      const nomeCompletoCell = row.insertCell();
+      nomeCompletoCell.textContent = pessoa;
+    });
+
+    // Remove a segunda coluna do cabeçalho, se existir
+    if (headerRow.cells.length > 1) {
+      headerRow.deleteCell(1);
+    }
+
+    // Limpa o corpo do rodapé
+    const footerRow = document.querySelector('#tabelaRelatorioSergioVezza tfoot tr');
+    if (footerRow) {
+      footerRow.innerHTML = '<th></th>'; // Garante que só tenha uma célula vazia
+    }
   }
 
   function handleSearch() {
@@ -816,85 +832,73 @@
   }
 
   function atualizarTabelaSergioVezza(pessoas) {
-  tabelaRelatorioSergioVezzaBody.innerHTML = '';
-  let total = 0;
+    tabelaRelatorioSergioVezzaBody.innerHTML = '';
+    let total = pessoas.size; // Obtém o total de pessoas do Set
 
-  const nomesOrdenados = Array.from(pessoas).sort(function (a, b) {
-    return a.localeCompare(b, undefined, { sensitivity: 'base' });
-  });
+    // Atualiza o cabeçalho da tabela
+    const headerRow = document.querySelector('#tabelaRelatorioSergioVezza thead tr');
+    headerRow.innerHTML = `<th>Total de Pessoas: <span id="totalRelatorioSergioVezza">${total}</span></th>`;
 
-  nomesOrdenados.forEach(pessoa => {
-    const row = tabelaRelatorioSergioVezzaBody.insertRow();
-    const nomeCompletoCell = row.insertCell();
-    nomeCompletoCell.textContent = pessoa;
-    total++;
-  });
+    const nomesOrdenados = Array.from(pessoas).sort(function (a, b) {
+      return a.localeCompare(b, undefined, { sensitivity: 'base' });
+    });
 
-  // Remove a segunda coluna (se existir)
-  const headerRow = document.querySelector('#tabelaRelatorioSergioVezza thead tr');
-  if (headerRow) {
-    const headerCells = headerRow.querySelectorAll('th');
-    if (headerCells.length > 1) {
+    nomesOrdenados.forEach(pessoa => {
+      const row = tabelaRelatorioSergioVezzaBody.insertRow();
+      const nomeCompletoCell = row.insertCell();
+      nomeCompletoCell.textContent = pessoa;
+    });
+
+    // Remove a segunda coluna do cabeçalho, se existir
+    if (headerRow.cells.length > 1) {
       headerRow.deleteCell(1);
     }
-  }
 
-  const dataRows = document.querySelectorAll('#tabelaRelatorioSergioVezza tbody tr');
-  dataRows.forEach(row => {
-    if (row.cells.length > 1) {
-      row.deleteCell(1);
-    }
-  });
-
-  // Junta "Total de Pessoas" e a quantidade em uma única célula
-  const footerRow = document.querySelector('#tabelaRelatorioSergioVezza tfoot tr');
-  if (footerRow) {
-    footerRow.cells[0].textContent = `Total de Pessoas: ${total}`;
-    // Remove a segunda célula do rodapé (se existir)
-    if (footerRow.cells.length > 1) {
-      footerRow.deleteCell(1);
+    // Limpa o corpo do rodapé
+    const footerRow = document.querySelector('#tabelaRelatorioSergioVezza tfoot tr');
+    if (footerRow) {
+      footerRow.innerHTML = '<th></th>'; // Garante que só tenha uma célula vazia
     }
   }
-}
-function copySergioVezzaReportAsTable() {
-  const tabela = document.getElementById('tabelaRelatorioSergioVezza');
-  let textoParaCopiar = "";
-  const nomesCompletos = [];
+  function copySergioVezzaReportAsTable() {
+    const tabela = document.getElementById('tabelaRelatorioSergioVezza');
+    let textoParaCopiar = "";
+    const nomesCompletos = [];
 
-  const rows = tabela.querySelectorAll('tbody tr');
-  rows.forEach(row => {
-    const nomeCompletoCell = row.querySelector('td:first-child');
-    if (nomeCompletoCell) {
-      nomesCompletos.push(nomeCompletoCell.textContent.trim());
-    }
-  });
-
-  nomesCompletos.sort(function (a, b) {
-    return a.localeCompare(b, undefined, { sensitivity: 'base' });
-  });
-
-  nomesCompletos.forEach(nomeCompleto => {
-    textoParaCopiar += `${nomeCompleto}\n`;
-  });
-
-  const totalRow = tabela.querySelector('tfoot tr');
-  if (totalRow) {
-    textoParaCopiar += `${totalRow.cells[0].textContent}`;
-  }
-
-  navigator.clipboard.writeText(textoParaCopiar)
-    .then(() => {
-    })
-    .catch(err => {
-      console.error('Falha ao copiar o relatório Sergio Vezza: ', err);
+    const rows = tabela.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+      const nomeCompletoCell = row.querySelector('td:first-child');
+      if (nomeCompletoCell) {
+        nomesCompletos.push(nomeCompletoCell.textContent.trim());
+      }
     });
-}
 
-function downloadSergioVezzaReportAsExcel() {
-const tabela = document.getElementById('tabelaRelatorioSergioVezza');
-const wb = XLSX.utils.table_to_book(tabela, { sheet: "Relatório Sergio Vezza" });
-XLSX.writeFile(wb, "Relatorio_Sergio_Vezza.xlsx");
-}
+    nomesCompletos.sort(function (a, b) {
+      return a.localeCompare(b, undefined, { sensitivity: 'base' });
+    });
+
+    nomesCompletos.forEach(nomeCompleto => {
+      textoParaCopiar += `${nomeCompleto}\n`;
+    });
+
+    const totalRow = tabela.querySelector('tfoot tr');
+    if (totalRow && totalRow.cells.length > 0) {
+      textoParaCopiar += `${totalRow.cells[0].textContent}`;
+    }
+
+    navigator.clipboard.writeText(textoParaCopiar)
+      .then(() => {
+      })
+      .catch(err => {
+        console.error('Falha ao copiar o relatório Sergio Vezza: ', err);
+      });
+  }
+
+  function downloadSergioVezzaReportAsExcel() {
+  const tabela = document.getElementById('tabelaRelatorioSergioVezza');
+  const wb = XLSX.utils.table_to_book(tabela, { sheet: "Relatório Sergio Vezza" });
+  XLSX.writeFile(wb, "Relatorio_Sergio_Vezza.xlsx");
+  }
 </script>
 </body>
 </html>
