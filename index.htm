@@ -333,7 +333,7 @@
   <p><strong>Total de pessoas: <span id="totalPessoas">0</span></strong></p>
   <br>
   <div>
-    <input type="text" id="searchInput" placeholder="Pesquisar nos registros...">
+    <input type="search" id="searchInput" placeholder="Pesquisar nos registros...">
   </div>
   <br>
   <div class="legenda">
@@ -572,6 +572,7 @@
       "Lojista - Feirinha": "Visitante",
       "Terceiros Growth": "GROWTH",
       "Tech": "GROWTH",
+      "Bees Tech": "GROWTH",
       "Growth Group": "GROWTH",
     };
 
@@ -610,7 +611,7 @@
     const departamentosEspeciais = {};
     const idsProcessadosDepartamentos = new Set();
     const header = data[0] || [];
-    const departamentosInteresse = ["Sergio Vezza", "CDD Campinas", "Terceiros Growth", "Tech", "Growth Group"];
+    const departamentosInteresse = ["Sergio Vezza", "CDD Campinas", "Terceiros Growth","Tech", "Bees Tech", "Growth Group"];
 
     for (let i = 2; i < data.length; i++) {
       const linha = data[i];
@@ -629,22 +630,42 @@
   }
 
   function gerarRelatorioSergioVezza(data) {
-    const pessoasSergioVezza = new Set();
-    const header = data[0] || [];
+  const header = data[0] || [];
+  const ultimoRegistroPorId = {};
 
-    for (let i = 1; i < data.length; i++) {
-      const linha = data[i];
-      const nome = linha[7];
-      const sobrenome = linha[8];
-      const departamento = linha[11];
+  for (let i = 1; i < data.length; i++) {
+    const linha = data[i];
+    const idPessoal = linha[6];
+    const dataHoraStr = linha[1];
+    const nome = linha[7];
+    const sobrenome = linha[8];
+    const departamento = linha[11];
 
-      if (departamento === 'Sergio Vezza' && nome && sobrenome) {
-        pessoasSergioVezza.add(`${nome} ${sobrenome}`);
+    if (idPessoal && dataHoraStr && nome && sobrenome) {
+      const dataHora = new Date(dataHoraStr);
+      if (!isNaN(dataHora.getTime())) {
+        if (!ultimoRegistroPorId[idPessoal] || dataHora > ultimoRegistroPorId[idPessoal].dataHora) {
+          ultimoRegistroPorId[idPessoal] = {
+            nomeCompleto: `${nome} ${sobrenome}`,
+            departamento: departamento,
+            dataHora: dataHora
+          };
+        }
       }
     }
-
-    atualizarTabelaSergioVezza(pessoasSergioVezza);
   }
+
+  // Filtra apenas os que têm "Sergio Vezza" como último departamento
+  const pessoasSergioVezza = new Set();
+  for (const id in ultimoRegistroPorId) {
+    if (ultimoRegistroPorId[id].departamento === "Sergio Vezza") {
+      pessoasSergioVezza.add(ultimoRegistroPorId[id].nomeCompleto);
+    }
+  }
+
+  atualizarTabelaSergioVezza(pessoasSergioVezza);
+}
+
 
   const departamentosEsperadosInicial = []; // Aqui só serão exibidos os departamentos para o Rafael.
   const departamentosEsperadosAtualizado = [
@@ -652,8 +673,8 @@
     "Prestador de Serviços", "Visitante"
   ];
   const departamentosEsperadosEspecial = [ // Aqui só serão exibidos os departamentos para o Patrick.
-    "CDD Campinas", "Sergio Vezza", "Terceiros Growth",
-    "Tech",
+    "CDD Campinas", "Sergio Vezza", "Terceiros Growth", "Tech",
+    "Bees Tech",
     "Growth Group"
   ];
 
