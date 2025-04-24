@@ -1,925 +1,452 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-<title>Relatórios de Pessoas e Departamentos</title>
-<style>
-  /* Estilos gerais */
-  body {
-    font-family: sans-serif;
-    padding: 30px;
-  }
+    <meta charset="UTF-8" />
+    <title>Pesquisa de pessoas</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        input[type="file"], input[type="text"] { margin-bottom: 10px; }
+        ul { list-style-type: none; padding-left: 0; }
+        li { padding: 5px 0; border-bottom: 1px solid #ccc; }
+        #upload {
+            display: none; /* Esconde o input padrão */
+        }
 
-  .conteudo {
-    margin: auto;
-    left: 0;
-    right: 0;
-    max-width: 700px;
-  }
+        .upload-label {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-  h1, h2, h3 {
-    text-align: center;
-    color: #333;
-  }
+        .upload-label:hover {
+            background-color: #0056b3;
+        }
 
-  p {
-    margin-bottom: 10px;
-  }
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 25px;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
 
-  label[for="fileInput"] {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 0px;
-    font-size: 16px;
-    cursor: pointer;
-    display: inline-block;
-    margin-top: 10px;
-    transition: background-color 0.3s ease;
-  }
+        .search-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0,123,255,0.4);
+        }
+        #department-filter {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        #department-filter label {
+            margin-left: 0;
+            margin-right: 0;
+        }
 
-  label[for="fileInput"]:hover {
-    background-color: #45a049;
-  }
+        #department-summary {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 600px;
+        }
 
-  #fileInput {
-    display: none;
-  }
+        #department-summary th, #department-summary td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
 
-  #fileName {
-    margin-left: 10px;
-    font-style: italic;
-    color: #777;
-  }
+        #department-summary th {
+            background-color: #f0f0f0;
+        }
 
-  button {
-    padding: 10px 15px;
-    margin-top: 10px;
-    border: 1px solid #ccc;
-    border-radius: 0px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
+        #department-summary tfoot td {
+            font-weight: bold;
+        }
 
-  #resetButton {
-    background-color: #f44336;
-    color: white;
-    display: none; /* Inicialmente oculto */
-  }
+        #specific-department-summary {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 600px;
+        }
 
-  #resetButton:hover {
-    background-color: #d32f2f;
-  }
+        #specific-department-summary th, #specific-department-summary td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
 
-  #copyPersonReportButton, #copyDepartmentReportButton, #copySpecialReportButton, #copySergioVezzaReportButton {
-    background-color: #008CBA;
-    color: white;
-    display: none; /* Inicialmente oculto */
-    margin-right: 10px;
-    margin-top: 10px;
-  }
+        #specific-department-summary th {
+            background-color: #f0f0f0;
+        }
 
-  #copyPersonReportButton:hover, #copyDepartmentReportButton:hover, #copySpecialReportButton:hover, #copySergioVezzaReportButton:hover {
-    background-color: #005f73;
-  }
-
-  #searchInput {
-    padding: 10px;
-    margin-top: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: text;
-    width: 300px;
-    display: none; /* Inicialmente oculto */
-    margin-right: 10px;
-  }
-
-  /* Estilos para o relatório de pessoas */
- #relatorioPessoas {
-  margin-top: 20px;
-  display: none; /* Inicialmente oculto */
-  font-size: 18px;
-  padding: 15px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  max-height: 500px;
-  overflow-y: auto; /* Habilita rolagem vertical */
-  border:5px solid #000;
-}
-
-  #relatorioPessoas p {
-    margin-bottom: 10px;
-  }
-
-  #relatorioPessoas strong {
-    font-weight: bold;
-  }
-
-  #listaUltimosRegistros {
-    margin-top: 10px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 16px;
-  }
-
-  #listaUltimosRegistros div {
-    margin-bottom: 5px;
-    word-break: break-word; /* Quebra palavras longas */
-    border: 2px solid #000; /* Adiciona a borda */
-    padding: 8px; /* Adiciona um pouco de espaço interno para a borda não ficar colada no texto */
-    border-radius: 5px; /* Opcional: para deixar a borda com cantos arredondados */
-  }
-
-  .saida {
-    background-color: #ffb4b4; /* Vermelho claro */
-  }
-
-  .entrada {
-    background-color: #fff; /* Verde claro */
-  }
-
-  /* Estilos para o relatório de departamentos */
-  #relatorioDepartamentos {
-    margin-top: 20px;
-    display: none; /* Inicialmente oculto */
-  }
-
-  #tabelaRelatorioDepartamentos1, #tabelaRelatorioDepartamentos2, #tabelaRelatorioDepartamentos3 {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-  }
-
-  #tabelaRelatorioDepartamentos1 th, #tabelaRelatorioDepartamentos1 td,
-  #tabelaRelatorioDepartamentos2 th, #tabelaRelatorioDepartamentos2 td,
-  #tabelaRelatorioDepartamentos3 th, #tabelaRelatorioDepartamentos3 td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-
-  #tabelaRelatorioDepartamentos1 th, #tabelaRelatorioDepartamentos2 th, #tabelaRelatorioDepartamentos3 th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-  }
-
-  #tabelaRelatorioDepartamentos1 tfoot th, #tabelaRelatorioDepartamentos1 tfoot td,
-  #tabelaRelatorioDepartamentos2 tfoot th, #tabelaRelatorioDepartamentos2 tfoot td,
-  #tabelaRelatorioDepartamentos3 tfoot th, #tabelaRelatorioDepartamentos3 tfoot td {
-    font-weight: bold;
-    background-color: #eee;
-  }
-
-  #relatorio1, #relatorio2, #relatorio3 {
-    display: none; /* Removido, pois já está definido em #relatorioDepartamentos > h3 e table */
-  }
-
-  #searchInput {
-    padding: 10px;
-    margin-top: 10px;
-    border: 2px solid #222;
-    border-radius: 50px;
-    font-size: 22px;
-    cursor: text;
-    width: 300px;
-    display: inline-block;
-    margin-right: 10px;
-    box-sizing: border-box;
-    text-align: center;
-  }
-
-  #searchInput:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  }
-
-  #searchInput::placeholder {
-    font-size: 22px;
-    color: #777;
-    font-style: italic;
-  }
-
-  .legenda {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #555;
-  }
-
-  .legenda span {
-    display: inline-block;
-    width: 15px;
-    height: 15px;
-    border: 1px solid #ccc;
-    margin-right: 5px;
-    vertical-align: middle;
-  }
-
-  .legenda .entrada-cor {
-    background-color: #fff;
-  }
-
-  .legenda .saida-cor {
-    background-color: #ffb4b4;
-  }
-
-  /* Estilos para o relatório Sergio Vezza */
-  #relatorioSergioVezza {
-    margin-top: 20px;
-    display: none;
-  }
-
-  #tabelaRelatorioSergioVezza {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-  }
-
-  #tabelaRelatorioSergioVezza th, #tabelaRelatorioSergioVezza td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-
-  #tabelaRelatorioSergioVezza th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-  }
-
-  #tabelaRelatorioSergioVezza tfoot th, #tabelaRelatorioSergioVezza tfoot td {
-    font-weight: bold;
-    background-color: #eee;
-  }
-</style>
+        #specific-department-summary tfoot td {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-<div class="conteudo">
-<h1>Relatórios de Pessoas e Departamentos</h1>
-<p>Selecione o arquivo Excel (.xlsx)</p>
-<label for="fileInput">Escolher Arquivo</label>
-<span id="fileName">Nenhum arquivo selecionado</span>
-<input type="file" id="fileInput">
-<br>
 
-<div id="relatorioDepartamentos">
-  <h2>Relatório de Departamentos</h2>
-  <h3>Relatório de Departamentos Inicial</h3>
-  <table id="tabelaRelatorioDepartamentos1">
-    <thead>
-      <tr>
-        <th>Departamento</th>
-        <th>Quantidade</th>
-      </tr>
-    </thead>
-    <tbody>
-    </tbody>
-    <tfoot>
-      <tr>
-        <th>Total</th>
-        <th id="totalRelatorioDepartamentos1">0</th>
-      </tr>
-    </tfoot>
-  </table>
+    <h3>Pesquisa de pessoas</h3>
+    <input type="file" id="upload" accept=".xls,.xlsx" />
+    <label for="upload" class="upload-label">Selecionar arquivo Excel</label>
+    <p id="file-name" style="font-style: italic; color: #555;"></p>
+    <br>
+    <p id="count">Total de pessoas: 0</p>
+    <div id="department-filter" style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+        <strong>Filtrar por Departamento:</strong><br>
+        <label style="margin-bottom: 10px; cursor: pointer;">
+            <input type="checkbox" id="toggle-all-checkboxes"> Marcar Todos/Desmarcar Todos
+        </label>
+    </div>
+    <input type="search" id="search" placeholder="🔍 Pesquisar..." class="search-input" />
+    <button id="export-excel" style="padding: 10px 15px; font-size: 16px; border: none; border-radius: 5px; background-color: #28a745; color: white; cursor: pointer; margin-top: 20px;">Exportar para Excel</button>
+    <ul id="list"></ul>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <h1>Relatórios</h1>
+    <p>Relatório (Global)</p>
+   <table id="department-summary">
+        <thead>
+            <tr>
+                <th>Departamento</th>
+                <th>Quantidade</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>Total</td>
+                <td>0</td>
+            </tr>
+        </tfoot>
+    </table>
+    <br>
+    <br>
+    <br>
+    <br>
+    <p>Relatório (BEES)</p>
+    <table id="specific-department-summary">
+        <thead>
+            <tr>
+                <th>Departamento</th>
+                <th>Quantidade</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+         <tfoot>
+            <tr>
+                <td>Total</td>
+                <td>0</td>
+            </tr>
+        </tfoot>
+    </table>
+    <script>
+        const uploadInput = document.getElementById('upload');
+        const searchInput = document.getElementById('search');
+        const list = document.getElementById('list');
+        let allItems = [];
+        let departmentCheckboxes = {};
+        const departmentFilterDiv = document.getElementById('department-filter');
+        const departmentSummaryTable = document.getElementById('department-summary');
+        const specificDepartmentSummaryTable = document.getElementById('specific-department-summary');
+        const departmentMapping = {
+            "Visitantes": "Visitante",
+            "Ab-inbev": "AGT",
+            "Prestador de Serviços": "Prestador de Serviços",
+            "CDD Campinas": "CDD",
+            "Camila Murakawa": "AGT",
+            "Felipe Aragão": "AGT",
+            "Gabriel Filipecki": "AGT",
+            "Luis Veronesi": "AGT",
+            "Rafael Pacini": "AGT",
+            "Sonia Fuscaldi": "AGT",
+            "Sergio Vezza": "GROWTH",
+            "Fabio Mazza": "AGT",
+            "Ronaldo Fiorito": "AGT",
+            "Marcelo Rentz": "AGT",
+            "Goran Djuric": "AGT",
+            "AC": "Visitante",
+            "CSC": "CSC",
+            "Carlos Nobre": "AGT",
+            "Fernando Leite de Campos": "AGT",
+            "Mauricio Nogueira Soufen": "AGT",
+            "Alexandre Van Wonterghem": "AGT",
+            "Keith Davies": "AGT",
+            "Lojista - Feirinha": "Visitante",
+            "Terceiros Growth": "GROWTH",
+            "Tech": "GROWTH",
+            "Bees Tech": "GROWTH",
+            "Growth Group": "GROWTH"
+        };
+        const specificDepartments = ["CDD Campinas", "Sergio Vezza", "Terceiros Growth", "Bees Tech", "Growth Group"];
+        const toggleAllCheckbox = document.getElementById('toggle-all-checkboxes');
 
-  <h3>Relatório de departamentos para o Global (Rafael) ás 9h30</h3>
-  <table id="tabelaRelatorioDepartamentos2">
-    <thead>
-      <tr>
-        <th>Departamento</th>
-        <th>Quantidade</th>
-      </tr>
-    </thead>
-    <tbody>
-    </tbody>
-    <tfoot>
-      <tr>
-        <th>Total</th>
-        <th id="totalRelatorioDepartamentos2">0</th>
-      </tr>
-    </tfoot>
-  </table>
-
-  <h3>Relatório de departamentos para o BEES (Patrick) ás 16h00</h3>
-  <table id="tabelaRelatorioDepartamentos3">
-    <thead>
-      <tr>
-        <th>Departamento</th>
-        <th>Quantidade</th>
-      </tr>
-    </thead>
-    <tbody>
-    </tbody>
-    <tfoot>
-      <tr>
-        <th>Total</th>
-        <th id="totalRelatorioDepartamentos3">0</th>
-      </tr>
-    </tfoot>
-  </table>
-  <button id="copyDepartmentReportButton" onclick="copyDepartmentReportAsTable()">Copiar Relatório de Departamentos</button>
-  <button id="copySpecialReportButton" onclick="copySpecialReportAsTable()">Copiar Relatório Especial</button>
-</div>
-
-<button id="resetButton" onclick="resetPage()">Remover Arquivo e Relatórios</button>
-
-<div id="relatorioPessoas">
-  <h2>Relatório de pessoas que entraram e sairam do prédio</h2>
-  <p>Pessoas que entraram: <span id="pessoasNoPredio">0</span></p>
-  <p>Pessoas que sairam: <span id="pessoasQueSairam">0</span></p>
-  <p><strong>Total de pessoas: <span id="totalPessoas">0</span></strong></p>
-  <br>
-  <div>
-    <input type="search" id="searchInput" placeholder="Pesquisar nos registros...">
-  </div>
-  <br>
-  <div class="legenda">
-    Legenda:
-    Pessoas que entraram: <span class="entrada-cor"></span>
-    Pessoas que sairam: <span class="saida-cor"></span>
-  </div>
-  <br>
-  <div id="listaUltimosRegistros">
-    <h3>Últimos Registros por ID Pessoal (Dados Completos):</h3>
-    <div id="ultimosRegistrosLista"></div>
-  </div>
-</div>
-
-<div id="relatorioSergioVezza">
-  <h2>Relatório de pessoas do departamento "Sergio Vezza" para o BEES (Patrick) ás 9h30</h2>
-  <table id="tabelaRelatorioSergioVezza">
-    <thead>
-      <tr>
-        <th>Total de Pessoas: <span id="totalRelatorioSergioVezza">0</span></th>
-      </tr>
-    </thead>
-    <tbody>
-    </tbody>
-    <tfoot>
-      <tr>
-        <th></th>
-      </tr>
-    </tfoot>
-  </table>
-  <button id="copySergioVezzaReportButton" onclick="copySergioVezzaReportAsTable()">Copiar Relatório Sergio Vezza</button>
-  <button id="downloadSergioVezzaReportButton" onclick="downloadSergioVezzaReportAsExcel()">Baixar Relatório Sergio Vezza (Excel)</button>
-</div>
-</div>
-<script src="https://unpkg.com/xlsx/xlsx.js"></script>
-<script>
-  const fileInput = document.getElementById('fileInput');
-  const fileNameSpan = document.getElementById('fileName');
-  const relatorioPessoasDiv = document.getElementById('relatorioPessoas');
-  const pessoasNoPredioSpan = document.getElementById('pessoasNoPredio');
-  const pessoasQueSairamSpan = document.getElementById('pessoasQueSairam');
-  const totalPessoasSpan = document.getElementById('totalPessoas');
-  const listaUltimosRegistrosDiv = document.getElementById('listaUltimosRegistros');
-  const ultimosRegistrosLista = document.getElementById('ultimosRegistrosLista');
-  const searchInput = document.getElementById('searchInput');
-
-  const relatorioDepartamentosDiv = document.getElementById('relatorioDepartamentos');
-  const tabelaRelatorioDepartamentos1Body = document.querySelector('#tabelaRelatorioDepartamentos1 tbody');
-  const totalRelatorioDepartamentos1 = document.getElementById('totalRelatorioDepartamentos1');
-  const tabelaRelatorioDepartamentos2Body = document.querySelector('#tabelaRelatorioDepartamentos2 tbody');
-  const totalRelatorioDepartamentos2 = document.getElementById('totalRelatorioDepartamentos2');
-  const tabelaRelatorioDepartamentos3Body = document.querySelector('#tabelaRelatorioDepartamentos3 tbody');
-  const totalRelatorioDepartamentos3 = document.getElementById('totalRelatorioDepartamentos3');
-
-  const relatorioSergioVezzaDiv = document.getElementById('relatorioSergioVezza');
-  const tabelaRelatorioSergioVezzaBody = document.querySelector('#tabelaRelatorioSergioVezza tbody');
-  const totalRelatorioSergioVezza = document.getElementById('totalRelatorioSergioVezza');
-
-  const resetButton = document.getElementById('resetButton');
-  const copyDepartmentReportButton = document.getElementById('copyDepartmentReportButton');
-  const copySpecialReportButton = document.getElementById('copySpecialReportButton');
-  const copySergioVezzaReportButton = document.getElementById('copySergioVezzaReportButton');
-
-  let todosUltimosRegistros = [];
-
-  fileInput.addEventListener('change', handleFile);
-  fileInput.addEventListener('change', updateFileName);
-  searchInput.addEventListener('input', handleSearch);
-
-  // Inicialmente, os relatórios e botões estão ocultos
-  resetButton.style.display = 'none';
-  relatorioPessoasDiv.style.display = 'none';
-  relatorioDepartamentosDiv.style.display = 'none';
-  relatorioSergioVezzaDiv.style.display = 'none';
-  copyDepartmentReportButton.style.display = 'none';
-  copySpecialReportButton.style.display = 'none';
-  copySergioVezzaReportButton.style.display = 'none';
-  searchInput.style.display = 'none';
-
-  function updateFileName() {
-    if (fileInput.files.length > 0) {
-      fileNameSpan.textContent = fileInput.files[0].name;
-    } else {
-      fileNameSpan.textContent = 'Nenhum arquivo selecionado';
-      resetAllReports();
-    }
-  }
-
-  function handleFile(e) {
+        uploadInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        const data = new Uint8Array(event.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+    document.getElementById('file-name').textContent = `📂 Arquivo selecionado: ${file.name}`;
+    if (!file) return;
 
-        processarDados(jsonData);
-        resetButton.style.display = 'inline-block';
-      };
-      reader.readAsArrayBuffer(file);
-    }
-  }
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data, { type: 'array' });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-  function processarDados(data) {
-    // Processar relatório de pessoas
-    const ultimoRegistroPorId = {};
-    const header = data[0] || [];
+    const departments = {};
+    const originalDepartments = {};
 
-    for (let i = 1; i < data.length; i++) { // Começar da segunda linha (após o cabeçalho)
-      const linha = data[i];
-      const idPessoal = linha[6];
-      const dataHoraStr = linha[1];
-      const status = linha[3];
-      const entradaSaidaColunaD = linha[3]; // Coluna D (índice 3)
+    json.slice(2).forEach(row => {
+        const uniqueKey = row[6]; // Coluna G
+        const department = row[11] && row[11].trim() ? row[11].trim() : "Portaria Virtual"; // Coluna L
 
-      if (idPessoal !== undefined && idPessoal !== '') {
-        if (dataHoraStr !== undefined && status !== undefined) {
-          const dataHora = new Date(dataHoraStr);
-          if (!isNaN(dataHora.getTime())) {
-            if (!ultimoRegistroPorId[idPessoal] || dataHora > ultimoRegistroPorId[idPessoal].dataHora) {
-              ultimoRegistroPorId[idPessoal] = {
-                dataHora: dataHora,
-                status: status ? status.toLowerCase() : '',
-                entradaSaidaColunaD: entradaSaidaColunaD ? entradaSaidaColunaD.toLowerCase() : '',
-                linha: linha
-              };
-            }
-          }
+        if (!uniqueKey || !department) return;
+
+        if (!departments[department]) {
+            departments[department] = new Set();
+            originalDepartments[department] = department;
         }
-      }
+
+        const nome = row[7] || "";        // Coluna H
+        const rg = row[6] || "";          // Coluna G
+        const sobrenome = row[8] || "";    // Coluna I
+
+        const itemText = `${nome} ${sobrenome} - ${rg}`;
+        departments[department].add(itemText);
+    });
+
+    const departmentsArray = {};
+    for (const dept in departments) {
+        departmentsArray[dept] = Array.from(departments[dept]);
     }
 
-    todosUltimosRegistros = [];
-    ultimosRegistrosLista.innerHTML = '';
-    const pessoasNoPredio = new Set();
-    const pessoasQueSairam = new Set();
+    allItems = departmentsArray;
+    renderDepartmentFilters(originalDepartments);
 
-    for (const idPessoal in ultimoRegistroPorId) {
-      if (ultimoRegistroPorId.hasOwnProperty(idPessoal)) {
-        const ultimoRegistro = ultimoRegistroPorId[idPessoal];
-        const status = ultimoRegistro.status;
-        const entradaSaidaColunaD = ultimoRegistro.entradaSaidaColunaD;
-        const linhaDados = ultimoRegistro.linha;
-        let registroTexto = `ID: ${idPessoal}, Status: ${status}`;
-        const registroDiv = document.createElement('div');
-        registroDiv.style.border = '2px solid #000';
-        registroDiv.style.padding = '8px';
-        registroDiv.style.borderRadius = '5px';
-        registroDiv.style.marginBottom = '5px';
-
-        for (let j = 0; j < linhaDados.length; j++) {
-          if (linhaDados[j] !== undefined && linhaDados[j] !== '') {
-            const colunaNome = header[j] || `Coluna ${j + 1}`;
-            let valor = linhaDados[j];
-            if (j === 6 || j === 7 || j === 8) { // Colunas G (índice 6), H (índice 7), I (índice 8)
-              valor = `<strong>${valor}</strong>`;
-            }
-            registroTexto += `, ${colunaNome}: ${valor}`;
-          }
-        }
-        registroDiv.innerHTML = registroTexto;
-
-        const isEntrada = entradaSaidaColunaD === 'entrada';
-        const isSaidaColunaD = entradaSaidaColunaD === 'facial.elev.blb02sa' ||
-          entradaSaidaColunaD === 'facial.elev.2ss-said' ||
-          entradaSaidaColunaD === 'facial.elev.blb.02' ||
-          entradaSaidaColunaD === 'facial.elev.bla.02';
-        const isSaidaStatus = status.includes('saida') || status.includes('sáida');
-
-        if (isSaidaColunaD || isSaidaStatus) {
-          registroDiv.classList.add('saida');
-          pessoasQueSairam.add(idPessoal);
-        } else if (isEntrada) {
-          registroDiv.classList.add('entrada');
-          pessoasNoPredio.add(idPessoal);
-        } else if (!isSaidaStatus) { // Se não for saída pelo status, consideramos entrada (padrão)
-          registroDiv.classList.add('entrada');
-          pessoasNoPredio.add(idPessoal);
-        }
-
-        ultimosRegistrosLista.appendChild(registroDiv);
-        todosUltimosRegistros.push({ div: registroDiv, texto: registroTexto.toLowerCase() });
-      }
+    // Marca o checkbox "Marcar Todos" se houver algum departamento carregado
+    const toggleAllCheckboxElement = document.getElementById('toggle-all-checkboxes');
+    if (toggleAllCheckboxElement && Object.keys(originalDepartments).length > 0) {
+        toggleAllCheckboxElement.checked = true;
     }
 
-    pessoasNoPredioSpan.textContent = pessoasNoPredio.size;
-    pessoasQueSairamSpan.textContent = pessoasQueSairam.size;
-    totalPessoasSpan.textContent = pessoasNoPredio.size + pessoasQueSairam.size;
-    relatorioPessoasDiv.style.display = 'block';
-    searchInput.style.display = 'inline-block';
+    filterAndRenderList();
+    renderDepartmentSummary(departmentsArray);
+    renderSpecificDepartmentSummary(departmentsArray);
+});
 
-    // Processar relatório de departamentos
-    gerarRelatorioDepartamentos(data);
-    gerarRelatorioEspecial(data);
-    relatorioDepartamentosDiv.style.display = 'block';
-    copyDepartmentReportButton.style.display = 'inline-block';
-    copySpecialReportButton.style.display = 'inline-block';
+        searchInput.addEventListener('input', () => {
+            filterAndRenderList();
+        });
 
-    // Processar relatório Sergio Vezza
-    gerarRelatorioSergioVezza(data);
-    relatorioSergioVezzaDiv.style.display = 'block';
-    copySergioVezzaReportButton.style.display = 'inline-block';
-  }
+        function renderList(items) {
+            list.innerHTML = '';
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                list.appendChild(li);
+            });
 
-  function gerarRelatorioDepartamentos(data) {
-    const departamentosInicial = {};
-    const departamentosAtualizado = {};
-    const idsProcessadosDepartamentos = new Set();
-    const header = data[0] || [];
-    const modificacoes = { // Aqui sseraõ os departamentos agrupados ou não.
-      "Visitantes": "Visitante",
-      "Ab-inbev": "AGT",
-      "Prestador de Serviços": "Prestador de Serviços",
-      "CDD Campinas": "CDD",
-      "Camila Murakawa": "AGT",
-      "Felipe Aragão": "AGT",
-      "Gabriel Filipecki": "AGT",
-      "Luis Veronesi": "AGT",
-      "Rafael Pacini": "AGT",
-      "Sonia Fuscaldi": "AGT",
-      "Sergio Vezza": "GROWTH",
-      "Fabio Mazza": "AGT",
-      "Ronaldo Fiorito": "AGT",
-      "Marcelo Rentz": "AGT",
-      "Goran Djuric": "AGT",
-      "AC": "Visitante",
-      "CSC": "CSC",
-      "Carlos Nobre": "AGT",
-      "Fernando Leite de Campos": "AGT",
-      "Mauricio Nogueira Soufen": "AGT",
-      "Alexandre Van Wonterghem": "AGT",
-      "Keith Davies": "AGT",
-      "Lojista - Feirinha": "Visitante",
-      "Terceiros Growth": "GROWTH",
-      "Tech": "GROWTH",
-      "Bees Tech": "GROWTH",
-      "Growth Group": "GROWTH",
-    };
-
-    for (let i = 2; i < data.length; i++) {
-      const linha = data[i];
-      const idPessoal = linha[6];
-      let nomeDepartamento = linha[11];
-
-      if (idPessoal !== undefined && idPessoal !== '' && !idsProcessadosDepartamentos.has(idPessoal)) {
-        if (nomeDepartamento === '') {
-          nomeDepartamento = 'Portaria virtual';
-        }
-        if (nomeDepartamento) {
-          departamentosInicial[nomeDepartamento] = (departamentosInicial[nomeDepartamento] || 0) + 1;
+            document.getElementById('count').textContent = `Total de pessoas: ${items.length}`;
         }
 
-        let departamentoAtualizadoNome = nomeDepartamento;
-        if (departamentoAtualizadoNome in modificacoes) {
-          departamentoAtualizadoNome = modificacoes[departamentoAtualizadoNome];
+        function renderGroupedList(groups) {
+            list.innerHTML = '';
+            let total = 0;
+
+            Object.keys(groups).sort().forEach(dept => {
+                const deptHeader = document.createElement('li');
+                deptHeader.innerHTML = `<strong>${dept}</strong>`;
+                deptHeader.style.marginTop = '15px';
+                list.appendChild(deptHeader);
+
+                groups[dept].forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    list.appendChild(li);
+                    total++;
+                });
+            });
+
+            document.getElementById('count').textContent = `Total de pessoas: ${total}`;
         }
-        if (departamentoAtualizadoNome) {
-          departamentosAtualizado[departamentoAtualizadoNome] = (departamentosAtualizado[departamentoAtualizadoNome] || 0) + 1;
-        }
-        idsProcessadosDepartamentos.add(idPessoal);
-      }
-    }
 
-    // Relatório 1 - Inicial (só o que tiver nos dados)
-    atualizarTabelaDepartamentos(departamentosInicial, tabelaRelatorioDepartamentos1Body, totalRelatorioDepartamentos1);
+        function renderDepartmentFilters(depts) {
+    departmentFilterDiv.innerHTML = ''; // Limpa o conteúdo da div
 
-    // Relatório 2 - Atualizado (força todos os departamentos da lista)
-    atualizarTabelaDepartamentos(departamentosAtualizado, tabelaRelatorioDepartamentos2Body, totalRelatorioDepartamentos2, departamentosEsperadosAtualizado);
-  }
+    const toggleAllLabel = document.createElement('label');
+    const toggleCheckbox = document.createElement('input');
+    toggleCheckbox.type = 'checkbox';
+    toggleCheckbox.id = 'toggle-all-checkboxes';
+    toggleAllLabel.appendChild(toggleCheckbox);
+    toggleAllLabel.appendChild(document.createTextNode(' Marcar Todos/Desmarcar Todos'));
+    toggleAllLabel.style.marginBottom = '10px';
+    toggleAllLabel.style.cursor = 'pointer';
+    departmentFilterDiv.appendChild(toggleAllLabel);
 
-  function gerarRelatorioEspecial(data) {
-    const departamentosEspeciais = {};
-    const idsProcessadosDepartamentos = new Set();
-    const header = data[0] || [];
-    const departamentosInteresse = ["Sergio Vezza", "CDD Campinas", "Terceiros Growth","Tech", "Bees Tech", "Growth Group"];
+    // Adiciona o event listener PARA O CHECKBOX CRIADO AGORA
+    toggleCheckbox.addEventListener('change', toggleAllDepartments);
 
-    for (let i = 2; i < data.length; i++) {
-      const linha = data[i];
-      const idPessoal = linha[6];
-      let nomeDepartamento = linha[11];
+    departmentCheckboxes = {};
 
-      if (idPessoal !== undefined && idPessoal !== '' && !idsProcessadosDepartamentos.has(idPessoal)) {
-        if (nomeDepartamento && departamentosInteresse.includes(nomeDepartamento)) {
-          departamentosEspeciais[nomeDepartamento] = (departamentosEspeciais[nomeDepartamento] || 0) + 1;
-          idsProcessadosDepartamentos.add(idPessoal);
-        }
-      }
-    }
+    Object.keys(depts).sort().forEach(dept => {
+        const count = allItems[dept] ? allItems[dept].length : 0;
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `dept-${dept.replace(/\s+/g, '-')}`;
+        checkbox.value = dept;
+        checkbox.checked = true;
+        checkbox.addEventListener('change', filterAndRenderList);
 
-    atualizarTabelaDepartamentos(departamentosEspeciais, tabelaRelatorioDepartamentos3Body, totalRelatorioDepartamentos3, departamentosEsperadosEspecial);
-  }
+        const label = document.createElement('label');
+        label.htmlFor = checkbox.id;
+        label.textContent = `${dept} (${count})`;
+        label.style.marginLeft = '0px';
+        label.style.marginRight = '0px';
 
-  function gerarRelatorioSergioVezza(data) {
-  const header = data[0] || [];
-  const ultimoRegistroPorId = {};
-
-  for (let i = 1; i < data.length; i++) {
-    const linha = data[i];
-    const idPessoal = linha[6];
-    const dataHoraStr = linha[1];
-    const nome = linha[7];
-    const sobrenome = linha[8];
-    const departamento = linha[11];
-
-    if (idPessoal && dataHoraStr && nome && sobrenome) {
-      const dataHora = new Date(dataHoraStr);
-      if (!isNaN(dataHora.getTime())) {
-        if (!ultimoRegistroPorId[idPessoal] || dataHora > ultimoRegistroPorId[idPessoal].dataHora) {
-          ultimoRegistroPorId[idPessoal] = {
-            nomeCompleto: `${nome} ${sobrenome}`,
-            departamento: departamento,
-            dataHora: dataHora
-          };
-        }
-      }
-    }
-  }
-
-  // Filtra apenas os que têm "Sergio Vezza" como último departamento
-  const pessoasSergioVezza = new Set();
-  for (const id in ultimoRegistroPorId) {
-    if (ultimoRegistroPorId[id].departamento === "Sergio Vezza") {
-      pessoasSergioVezza.add(ultimoRegistroPorId[id].nomeCompleto);
-    }
-  }
-
-  atualizarTabelaSergioVezza(pessoasSergioVezza);
+        const div = document.createElement('div');
+        div.appendChild(checkbox);
+        div.appendChild(label);
+        departmentFilterDiv.appendChild(div);
+        departmentCheckboxes[checkbox.id] = dept;
+    });
 }
 
+        function toggleAllDepartments() {
+            const shouldCheck = this.checked;
+            Object.keys(departmentCheckboxes).forEach(checkboxId => {
+                const checkbox = document.getElementById(checkboxId);
+                if (checkbox) {
+                    checkbox.checked = shouldCheck;
+                }
+            });
+            filterAndRenderList(); // Atualiza a lista após marcar/desmarcar
+        }
 
-  const departamentosEsperadosInicial = []; // Aqui só serão exibidos os departamentos para o Rafael.
-  const departamentosEsperadosAtualizado = [
-    "AGT", "CDD", "CSC", "GROWTH", "Portaria virtual",
-    "Prestador de Serviços", "Visitante"
-  ];
-  const departamentosEsperadosEspecial = [ // Aqui só serão exibidos os departamentos para o Patrick.
-    "CDD Campinas", "Sergio Vezza", "Terceiros Growth", "Tech",
-    "Bees Tech",
-    "Growth Group"
-  ];
+        function filterAndRenderList() {
+            const search = searchInput.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const searchWords = search.split(/\s+/).filter(Boolean);
+            const visibleDepartments = new Set();
 
-  function atualizarTabelaDepartamentos(dados, tabelaBody, totalElement, listaDepartamentosEsperados = null) {
-    tabelaBody.innerHTML = '';
-    let total = 0;
+            // Verifica quais departamentos estão marcados
+            Object.keys(departmentCheckboxes).forEach(checkboxId => {
+                if (document.getElementById(checkboxId).checked) {
+                    visibleDepartments.add(departmentCheckboxes[checkboxId]);
+                }
+            });
 
-    let dadosParaUsar = dados;
+            const filteredGroups = {};
 
-    if (listaDepartamentosEsperados) {
-      dadosParaUsar = {};
-      listaDepartamentosEsperados.forEach(dep => {
-        dadosParaUsar[dep] = dados[dep] || 0;
-      });
-    }
+            Object.keys(allItems).forEach(dept => {
+                if (visibleDepartments.has(dept)) {
+                    const filtered = allItems[dept].filter(item => {
+                        const itemWords = item.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                        return searchWords.every(word => itemWords.includes(word));
+                    });
 
-    for (const departamento in dadosParaUsar) {
-      const quantidade = dadosParaUsar[departamento];
-      const row = tabelaBody.insertRow();
-      const departamentoCell = row.insertCell();
-      const quantidadeCell = row.insertCell();
-      departamentoCell.textContent = departamento;
-      quantidadeCell.textContent = quantidade;
-      total += quantidade;
-    }
+                    if (filtered.length > 0) {
+                        filteredGroups[dept] = filtered;
+                    }
+                }
+            });
 
-    totalElement.textContent = total;
-  }
+            renderGroupedList(filteredGroups);
+        }
 
-  function atualizarTabelaSergioVezza(pessoas) {
-    tabelaRelatorioSergioVezzaBody.innerHTML = '';
-    let total = pessoas.size; // Obtém o total de pessoas do Set
+        function renderDepartmentSummary(departments) {
+            const summaryTableBody = departmentSummaryTable.querySelector('tbody');
+            const summaryTableFooter = departmentSummaryTable.querySelector('tfoot td:last-child');
+            summaryTableBody.innerHTML = ''; // Limpa a tabela
 
-    // Atualiza o cabeçalho da tabela
-    const headerRow = document.querySelector('#tabelaRelatorioSergioVezza thead tr');
-    headerRow.innerHTML = `<th>Total de Pessoas: <span id="totalRelatorioSergioVezza">${total}</span></th>`;
+            let total = 0;
+            const departmentCounts = {};
 
-    const nomesOrdenados = Array.from(pessoas).sort(function (a, b) {
-      return a.localeCompare(b, undefined, { sensitivity: 'base' });
-    });
+             // Primeiro, mapeie os departamentos e conte as ocorrências
+            for (const dept in departments) {
+                const mappedDept = departmentMapping[dept] || dept; // Aplica o mapeamento
+                if (!departmentCounts[mappedDept]) {
+                    departmentCounts[mappedDept] = 0;
+                }
+                departmentCounts[mappedDept] += departments[dept].length;
+                total += departments[dept].length;
+            }
 
-    nomesOrdenados.forEach(pessoa => {
-      const row = tabelaRelatorioSergioVezzaBody.insertRow();
-      const nomeCompletoCell = row.insertCell();
-      nomeCompletoCell.textContent = pessoa;
-    });
+            // Depois, exiba os resultados na tabela
+            for (const dept in departmentCounts) {
+                const row = summaryTableBody.insertRow();
+                const deptCell = row.insertCell();
+                const countCell = row.insertCell();
+                deptCell.textContent = dept;
+                countCell.textContent = departmentCounts[dept];
+            }
 
-    // Remove a segunda coluna do cabeçalho, se existir
-    if (headerRow.cells.length > 1) {
-      headerRow.deleteCell(1);
-    }
+            summaryTableFooter.textContent = total;
+        }
 
-    // Limpa o corpo do rodapé
-    const footerRow = document.querySelector('#tabelaRelatorioSergioVezza tfoot tr');
-    if (footerRow) {
-      footerRow.innerHTML = '<th></th>'; // Garante que só tenha uma célula vazia
-    }
-  }
+        function renderSpecificDepartmentSummary(departments) {
+            const summaryTableBody = specificDepartmentSummaryTable.querySelector('tbody');
+            const summaryTableFooter = specificDepartmentSummaryTable.querySelector('tfoot td:last-child');
+            summaryTableBody.innerHTML = '';
 
-  function handleSearch() {
-    const termoPesquisa = searchInput.value.toLowerCase();
-    todosUltimosRegistros.forEach(registro => {
-      if (registro.texto.includes(termoPesquisa)) {
-        registro.div.style.display = ''; // Mostra o registro
-      } else {
-        registro.div.style.display = 'none'; // Oculta o registro
-      }
-    });
-  }
+            let total = 0;
 
-  function resetPage() {
-    fileInput.value = ''; // Limpa o arquivo selecionado
-    fileNameSpan.textContent = 'Nenhum arquivo selecionado'; // Reseta o nome do arquivo
-    resetAllReports(); // Limpa os relatórios de pessoas e departamentos
-    resetButton.style.display = 'none'; // Oculta o botão de reset
-    relatorioPessoasDiv.style.display = 'none'; // Oculta o relatório de pessoas
-    relatorioDepartamentosDiv.style.display = 'none'; // Oculta o relatório de departamentos
-    relatorioSergioVezzaDiv.style.display = 'none'; // Oculta o relatório Sergio Vezza
-    copyDepartmentReportButton.style.display = 'none'; // Oculta o botão de copiar do departamento
-    copySpecialReportButton.style.display = 'none';
-    copySergioVezzaReportButton.style.display = 'none';
-    searchInput.style.display = 'none'; // Oculta o campo de pesquisa
-    searchInput.value = ''; // Limpa o campo de pesquisa
-    todosUltimosRegistros = []; // Limpa o array de registros de pessoas
-  }
+            specificDepartments.forEach(deptName => {
+                const deptCount = departments[deptName] ? departments[deptName].length : 0;
+                const row = summaryTableBody.insertRow();
+                const deptCell = row.insertCell();
+                const countCell = row.insertCell();
+                deptCell.textContent = deptName;
+                countCell.textContent = deptCount;
+                total += deptCount;
+            });
+            summaryTableFooter.textContent = total;
+        }
 
-  function resetAllReports() {
-    // Reseta relatório de pessoas
-    pessoasNoPredioSpan.textContent = '0';
-    pessoasQueSairamSpan.textContent = '0';
-    totalPessoasSpan.textContent = '0';
-    ultimosRegistrosLista.innerHTML = '';
-    todosUltimosRegistros = [];
 
-    // Reseta relatório de departamentos
-    tabelaRelatorioDepartamentos1Body.innerHTML = '';
-    totalRelatorioDepartamentos1.textContent = '0';
-    tabelaRelatorioDepartamentos2Body.innerHTML = '';
-    totalRelatorioDepartamentos2.textContent = '0';
-    tabelaRelatorioDepartamentos3Body.innerHTML = '';
-    totalRelatorioDepartamentos3.textContent = '0';
+        // botão para gerar o arquivo excel e baixar
+        const exportExcelBtn = document.getElementById('export-excel');
 
-    // Reseta relatório Sergio Vezza
-    tabelaRelatorioSergioVezzaBody.innerHTML = '';
-    totalRelatorioSergioVezza.textContent = '0';
-  }
+        exportExcelBtn.addEventListener('click', () => {
+            const workbook = XLSX.utils.book_new();
+            const visibleDepartments = new Set();
 
-  function copyDepartmentReportAsTable() {
-    const tabela = document.getElementById('tabelaRelatorioDepartamentos2');
-    let textoParaCopiar = "";
+             // Verifica quais departamentos estão marcados
+            Object.keys(departmentCheckboxes).forEach(checkboxId => {
+                if (document.getElementById(checkboxId).checked) {
+                    visibleDepartments.add(departmentCheckboxes[checkboxId]);
+                }
+            });
 
-    // Adiciona as linhas do corpo
-    const rows = tabela.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-      const departamentoCell = row.querySelector('td:first-child');
-      const quantidadeCell = row.querySelector('td:last-child');
-      if (departamentoCell && quantidadeCell) {
-        textoParaCopiar += `${departamentoCell.textContent.trim()} = ${quantidadeCell.textContent.trim()}\n`;
-      }
-    });
+            Object.keys(allItems).forEach(dept => {
+                if (visibleDepartments.has(dept)) { //só adiciona a aba se o departamento estiver checado
+                    const deptData = [[dept]];
+                    allItems[dept].forEach(item => {
+                        deptData.push([item]);
+                    });
+                    const worksheet = XLSX.utils.aoa_to_sheet(deptData);
+                    XLSX.utils.book_append_sheet(workbook, worksheet, dept);
+                }
+            });
+            XLSX.writeFile(workbook, 'lista_por_departamento.xlsx');
+        });
+    </script>
 
-    // Adiciona a linha total
-    const totalRow = tabela.querySelector('tfoot tr');
-    if (totalRow) {
-      const totalLabelCell = totalRow.querySelector('th:first-child');
-      const totalValueCell = totalRow.querySelector('th:last-child');
-      if (totalLabelCell && totalValueCell) {
-        textoParaCopiar += `${totalLabelCell.textContent.trim()} = ${totalValueCell.textContent.trim()}`;
-      }
-    }
-
-    // Tenta copiar para a área de transferência
-    navigator.clipboard.writeText(textoParaCopiar)
-      .then(() => {
-        // Copiado com sucesso (sem alerta)
-      })
-      .catch(err => {
-        console.error('Falha ao copiar o relatório de departamentos: ', err);
-        // Falha ao copiar (sem alerta)
-      });
-  }
-
-  function copySpecialReportAsTable() {
-    const tabela = document.getElementById('tabelaRelatorioDepartamentos3');
-    let textoParaCopiar = "";
-
-    // Adiciona as linhas do corpo
-    const rows = tabela.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-      const departamentoCell = row.querySelector('td:first-child');
-      const quantidadeCell = row.querySelector('td:last-child');
-      if (departamentoCell && quantidadeCell) {
-        textoParaCopiar += `${departamentoCell.textContent.trim()} = ${quantidadeCell.textContent.trim()}\n`;
-      }
-    });
-
-    // Adiciona a linha total
-    const totalRow = tabela.querySelector('tfoot tr');
-    if (totalRow) {
-      const totalLabelCell = totalRow.querySelector('th:first-child');
-      const totalValueCell = totalRow.querySelector('th:last-child');
-      if (totalLabelCell && totalValueCell) {
-        textoParaCopiar += `${totalLabelCell.textContent.trim()} = ${totalValueCell.textContent.trim()}`;
-      }
-    }
-
-    // Tenta copiar para a área de transferência
-    navigator.clipboard.writeText(textoParaCopiar)
-      .then(() => {
-        // Copiado com sucesso (sem alerta)
-      })
-      .catch(err => {
-        console.error('Falha ao copiar o relatório especial: ', err);
-        // Falha ao copiar (sem alerta)
-      });
-  }
-
-  function atualizarTabelaSergioVezza(pessoas) {
-    tabelaRelatorioSergioVezzaBody.innerHTML = '';
-    let total = pessoas.size; // Obtém o total de pessoas do Set
-
-    // Atualiza o cabeçalho da tabela
-    const headerRow = document.querySelector('#tabelaRelatorioSergioVezza thead tr');
-    headerRow.innerHTML = `<th>Total de Pessoas: <span id="totalRelatorioSergioVezza">${total}</span></th>`;
-
-    const nomesOrdenados = Array.from(pessoas).sort(function (a, b) {
-      return a.localeCompare(b, undefined, { sensitivity: 'base' });
-    });
-
-    nomesOrdenados.forEach(pessoa => {
-      const row = tabelaRelatorioSergioVezzaBody.insertRow();
-      const nomeCompletoCell = row.insertCell();
-      nomeCompletoCell.textContent = pessoa;
-    });
-
-    // Remove a segunda coluna do cabeçalho, se existir
-    if (headerRow.cells.length > 1) {
-      headerRow.deleteCell(1);
-    }
-
-    // Limpa o corpo do rodapé
-    const footerRow = document.querySelector('#tabelaRelatorioSergioVezza tfoot tr');
-    if (footerRow) {
-      footerRow.innerHTML = '<th></th>'; // Garante que só tenha uma célula vazia
-    }
-  }
-  function copySergioVezzaReportAsTable() {
-    const tabela = document.getElementById('tabelaRelatorioSergioVezza');
-    let textoParaCopiar = "";
-    const nomesCompletos = [];
-
-    const rows = tabela.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-      const nomeCompletoCell = row.querySelector('td:first-child');
-      if (nomeCompletoCell) {
-        nomesCompletos.push(nomeCompletoCell.textContent.trim());
-      }
-    });
-
-    nomesCompletos.sort(function (a, b) {
-      return a.localeCompare(b, undefined, { sensitivity: 'base' });
-    });
-
-    nomesCompletos.forEach(nomeCompleto => {
-      textoParaCopiar += `${nomeCompleto}\n`;
-    });
-
-    const totalRow = tabela.querySelector('tfoot tr');
-    if (totalRow && totalRow.cells.length > 0) {
-      textoParaCopiar += `${totalRow.cells[0].textContent}`;
-    }
-
-    navigator.clipboard.writeText(textoParaCopiar)
-      .then(() => {
-      })
-      .catch(err => {
-        console.error('Falha ao copiar o relatório Sergio Vezza: ', err);
-      });
-  }
-
-  function downloadSergioVezzaReportAsExcel() {
-  const tabela = document.getElementById('tabelaRelatorioSergioVezza');
-  const wb = XLSX.utils.table_to_book(tabela, { sheet: "Relatório Sergio Vezza" });
-  XLSX.writeFile(wb, "Relatorio_Sergio_Vezza.xlsx");
-  }
-</script>
 </body>
-</html>
