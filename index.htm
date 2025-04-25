@@ -161,6 +161,29 @@ body {
         #specific-department-summary tfoot td {
             font-weight: bold;
         }
+        
+        #department-filter button {
+        width:200px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background-color 0.3s ease;
+    margin-top:10px;
+}
+
+#department-filter button:hover {
+    background-color: #e0e0e0;
+}
+
+#department-filter button:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
     </style>
 </head>
 <body>
@@ -172,7 +195,7 @@ body {
     <br>
     <p id="count">Total de pessoas: 0</p>
     <div id="department-filter">
-        <strong>Filtrar por Departamento:</strong><br>
+        <strong>Filtrar por Departamento:</strong><br><br><br><br>
     </div>
     <input type="search" id="search" placeholder="🔍 Pesquisar..." class="search-input" />
     <button id="export-excel" style="padding: 10px 15px; font-size: 16px; border: none; border-radius: 5px; background-color: #28a745; color: white; cursor: pointer; margin-top: 20px;">Exportar para Excel</button>
@@ -309,6 +332,30 @@ body {
 
         function renderDepartmentCheckboxes(departments) {
     departmentFilterDiv.innerHTML = '<strong>Filtrar por Departamento:</strong><br>';
+
+    const checkAllButton = document.createElement('button');
+    checkAllButton.textContent = 'Marcar Todos';
+    checkAllButton.style.marginRight = '10px';
+    checkAllButton.addEventListener('click', () => {
+        for (const dept in departmentCheckboxes) {
+            departmentCheckboxes[dept].checked = true;
+        }
+        filterAndRenderList();
+    });
+    departmentFilterDiv.appendChild(checkAllButton);
+
+    const uncheckAllButton = document.createElement('button');
+    uncheckAllButton.textContent = 'Desmarcar Todos';
+    uncheckAllButton.addEventListener('click', () => {
+        for (const dept in departmentCheckboxes) {
+            departmentCheckboxes[dept].checked = false;
+        }
+        filterAndRenderList();
+    });
+    departmentFilterDiv.appendChild(uncheckAllButton);
+    departmentFilterDiv.appendChild(document.createElement('br'));
+    departmentFilterDiv.appendChild(document.createElement('br')); // Adiciona um espaço extra
+
     departmentCheckboxes = {};
     departments.forEach(dept => {
         const checkbox = document.createElement('input');
@@ -321,13 +368,13 @@ body {
         const label = document.createElement('label');
         label.htmlFor = checkbox.id;
         label.textContent = `${dept} (${allItemsByDepartment[dept] ? allItemsByDepartment[dept].length : 0})`;
-        label.style.marginLeft = '5px'; // Adiciona um espaço entre o checkbox e o texto
+        label.style.marginLeft = '5px';
         label.style.marginRight = '0px';
         label.style.marginBottom = '5px';
-        label.style.display = 'flex'; // Garante que o label é um container flex
-        label.style.alignItems = 'center'; // Alinha verticalmente
+        label.style.display = 'flex';
+        label.style.alignItems = 'center';
 
-        label.prepend(checkbox); // Adiciona o checkbox *dentro* do label, antes do texto
+        label.prepend(checkbox);
         departmentFilterDiv.appendChild(label);
         departmentFilterDiv.appendChild(document.createElement('br'));
 
@@ -449,20 +496,29 @@ function filterAndRenderList() {
         }
 
         exportExcelBtn.addEventListener('click', () => {
-            const workbook = XLSX.utils.book_new();
-            for (const dept in allItemsByDepartment) {
-                const checkbox = departmentCheckboxes[dept];
-                if (checkbox && checkbox.checked) {
-                    const worksheetData = [[`Departamento: ${dept}`], ["Nome Completo - RG"]];
-                    allItemsByDepartment[dept].forEach(item => {
-                        worksheetData.push([item.split(' - ')[0].trim()]);
-                    });
-                    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-                    XLSX.utils.book_append_sheet(workbook, worksheet, dept);
-                }
-            }
-            XLSX.writeFile(workbook, 'lista_por_departamento.xlsx');
-        });
+            const workbook = XLSX.utils.book_new();
+            for (const dept in allItemsByDepartment) {
+                const checkbox = departmentCheckboxes[dept];
+                if (checkbox && checkbox.checked) {
+                    const filteredItems = allItemsByDepartment[dept].filter(item => {
+                        const search = searchInput.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                        const searchWords = search.split(/\s+/).filter(Boolean);
+                        const itemWords = item.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                        return searchWords.every(word => itemWords.includes(word));
+                    });
+
+                    if (filteredItems.length > 0) {
+                        const worksheetData = [[`Departamento: ${dept}`], ["Nome Completo"]];
+                        filteredItems.forEach(item => {
+                            worksheetData.push([item.split(' - ')[0].trim()]);
+                        });
+                        const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+                        XLSX.utils.book_append_sheet(workbook, worksheet, dept);
+                    }
+                }
+            }
+            XLSX.writeFile(workbook, 'lista_por_departamento.xlsx');
+        });
     </script>
 
 </body>
