@@ -67,19 +67,35 @@ body {
             box-shadow: 0 0 5px rgba(0,123,255,0.4);
         }
 
-        #department-filter {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-        #department-filter label {
-            margin-left: 0;
-            margin-right: 0;
-            cursor: pointer;
-            margin-bottom: 5px;
-        }
+       #department-filter {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px; /* Mantenha a margem inferior para separar do conteúdo abaixo */
+    border-bottom: 1px solid #eee; /* Mantenha a borda inferior, se desejado */
+    padding-bottom: 10px; /* Mantenha o padding inferior, se desejado */
+}
+
+#department-filter label {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 0;
+    cursor: pointer;
+    display: flex; /* Use flexbox para alinhar os itens */
+    align-items: center; /* Alinha verticalmente os itens ao centro */
+    margin-left: 0;
+    padding-left: 0; /* Remova o padding esquerdo anterior */
+}
+
+#department-filter input[type="checkbox"] {
+    margin-top: 0;
+    margin-bottom: 0;
+    vertical-align: middle;
+    margin-right: 5px; /* Adiciona um pequeno espaço entre o checkbox e o nome */
+}
+
+#department-filter br {
+    display: none;
+}
 
         .department-list {
             list-style-type: none;
@@ -305,18 +321,19 @@ body {
         const label = document.createElement('label');
         label.htmlFor = checkbox.id;
         label.textContent = `${dept} (${allItemsByDepartment[dept] ? allItemsByDepartment[dept].length : 0})`;
-        label.style.marginLeft = '0px';
+        label.style.marginLeft = '5px'; // Adiciona um espaço entre o checkbox e o texto
         label.style.marginRight = '0px';
         label.style.marginBottom = '5px';
+        label.style.display = 'flex'; // Garante que o label é um container flex
+        label.style.alignItems = 'center'; // Alinha verticalmente
 
-        departmentFilterDiv.appendChild(checkbox);
+        label.prepend(checkbox); // Adiciona o checkbox *dentro* do label, antes do texto
         departmentFilterDiv.appendChild(label);
         departmentFilterDiv.appendChild(document.createElement('br'));
 
         departmentCheckboxes[dept] = checkbox;
     });
 }
-
 function filterAndRenderList() {
     list.innerHTML = '';
     let total = 0;
