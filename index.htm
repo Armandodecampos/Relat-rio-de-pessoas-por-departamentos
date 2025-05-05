@@ -427,7 +427,10 @@ body {
             counts[mapped] = (counts[mapped] || 0) + 1;
         });
 
-        for (const dept in counts) {
+        // Ordenar os departamentos alfabeticamente
+        const sortedDepartments = Object.keys(counts).sort();
+
+        for (const dept of sortedDepartments) {
             const row = tbody.insertRow();
             row.insertCell().textContent = dept;
             row.insertCell().textContent = counts[dept];
@@ -447,12 +450,25 @@ body {
             if (specificDepartments.includes(dept)) counts[dept]++;
         });
 
-        specificDepartments.forEach(dept => {
+        // Ordenar os departamentos específicos alfabeticamente
+        const sortedSpecificDepartments = [...specificDepartments].sort();
+
+        sortedSpecificDepartments.forEach(dept => {
             const row = tbody.insertRow();
             row.insertCell().textContent = dept;
             row.insertCell().textContent = counts[dept];
         });
-        tfoot.textContent = specificDepartments.reduce((sum, d) => sum + counts[d], 0);
+        tfoot.textContent = sortedSpecificDepartments.reduce((sum, d) => sum + counts[d], 0);
+    }
+
+    // Formatar data para dd/mm/aaaa
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const parts = dateString.split('-');
+        if (parts.length === 3) {
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+        return dateString;
     }
 
     function generateDateDepartmentReport() {
@@ -467,6 +483,7 @@ body {
     const departmentDateCounts = {};
     const allDates = new Set();
     const processedEntries = new Set();
+    const totalPorData = {};
 
     if (json && json.length > 2) {
         json.slice(2).forEach(row => {
@@ -489,6 +506,7 @@ body {
                 if (!departmentDateCounts[department]) departmentDateCounts[department] = {};
                 departmentDateCounts[department][dateValue] = (departmentDateCounts[department][dateValue] || 0) + 1;
                 allDates.add(dateValue);
+                totalPorData[dateValue] = (totalPorData[dateValue] || 0) + 1;
             }
         });
     }
@@ -500,19 +518,33 @@ body {
     reportHTML += '<thead><tr>';
     reportHTML += '<th style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px;">Departamento</th>';
     sortedDates.forEach(date => {
-        reportHTML += `<th style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px;">${date}</th>`;
+        reportHTML += `<th style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px;">${formatDate(date)}</th>`;
     });
+    reportHTML += '<th style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px;">Total</th>';
     reportHTML += '</tr></thead><tbody>';
 
     selectedDepartments.forEach(dept => {
         reportHTML += '<tr>';
         reportHTML += `<td style="border: 1px solid #ddd; padding: 8px;">${dept}</td>`;
+        let rowTotal = 0;
         sortedDates.forEach(date => {
             const count = departmentDateCounts[dept]?.[date] || 0;
             reportHTML += `<td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${count}</td>`;
+            rowTotal += count;
         });
+        reportHTML += `<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">${rowTotal}</td>`;
         reportHTML += '</tr>';
     });
+
+    // Linha de total por data
+    reportHTML += '<tfoot><tr>';
+    reportHTML += '<td style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px; font-weight: bold;">Total</td>';
+    sortedDates.forEach(date => {
+        reportHTML += `<td style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px; text-align: center; font-weight: bold;">${totalPorData[date] || 0}</td>`;
+    });
+    const totalGeral = Object.values(totalPorData).reduce((sum, count) => sum + count, 0);
+    reportHTML += `<td style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px; text-align: center; font-weight: bold;">${totalGeral}</td>`;
+    reportHTML += '</tr></tfoot>';
 
     reportHTML += '</tbody></table>';
     container.innerHTML = reportHTML || '<p>Nenhum dado encontrado para os departamentos selecionados.</p>';
