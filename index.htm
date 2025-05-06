@@ -255,7 +255,7 @@ body {
         <strong>Filtrar por Departamento:</strong><br><br><br><br>
     </div>
     <input type="search" id="search" placeholder="🔍 Pesquisar..." class="search-input" />
-    <button id="export-excel" style="padding: 10px 15px; font-size: 16px; border: none; border-radius: 5px; background-color: #28a745; color: white; cursor: pointer; margin-top: 20px;">Exportar para Excel</button>
+    <button id="export-excel" style="padding: 10px 15px; font-size: 16px; border: none; border-radius: 5px; background-color: #28a745; color: white; cursor: pointer; margin-top: 20px;">Exportar para Excel (Em teste)</button>
     <ul id="list" class="department-list"></ul>
     <script>
     const uploadInput = document.getElementById('upload');
@@ -552,6 +552,59 @@ body {
     reportHTML += '</tbody></table>';
     container.innerHTML = reportHTML || '<p>Nenhum dado encontrado para os departamentos selecionados.</p>';
 }
+
+exportExcelBtn.addEventListener('click', () => {
+    const selectedDepartments = Object.keys(departmentCheckboxes).filter(dept => departmentCheckboxes[dept].checked);
+    const dataToExport = [];
+
+    // Adicionar cabeçalho
+    dataToExport.push(['Departamento', 'Nome', 'ID Pessoal']);
+
+    const registrosPorDepartamento = {};
+
+    // Processar os dados, incluindo "Portaria Virtual" para departamentos vazios
+    for (const dept in allItemsByDepartment) {
+        const departamento = selectedDepartments.includes(dept) ? dept : null;
+        if (departamento) {
+            allItemsByDepartment[dept].forEach(item => {
+                const partes = item.split(' - ');
+                const nome = partes[0] || '';
+                const cpf = partes[1] || '';
+                registrosPorDepartamento[departamento] = registrosPorDepartamento[departamento] || [];
+                registrosPorDepartamento[departamento].push({ nome, cpf });
+            });
+        }
+    }
+
+    // Adicionar dados ao array dataToExport
+    for (const departamento in registrosPorDepartamento) {
+        registrosPorDepartamento[departamento].forEach(registro => {
+            dataToExport.push([departamento, registro.nome, registro.cpf]);
+        });
+    }
+
+    // Adicionar registros de "Portaria Virtual"
+    if (allItemsByDepartment["Portaria Virtual"]) {
+        allItemsByDepartment["Portaria Virtual"].forEach(item => {
+            const partes = item.split(' - ');
+            const nome = partes[0] || '';
+            const cpf = partes[1] || '';
+            dataToExport.push(['Portaria Virtual', nome, cpf]);
+        });
+    }
+
+    // Criar um novo workbook
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet(dataToExport);
+
+    // Adicionar a worksheet ao workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Relatório');
+
+    // Salvar o arquivo
+    XLSX.writeFile(workbook, 'relatorio_departamentos.xlsx');
+});
+
+
 
 </script>
 
