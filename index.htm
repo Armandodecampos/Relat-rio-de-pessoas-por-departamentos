@@ -3,33 +3,35 @@
 <head>
     <meta charset="UTF-8" />
     <title>Relatórios</title>
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Adicionando a biblioteca XLSX para ler arquivos Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
         /* Scrollbar para navegadores WebKit */
-::-webkit-scrollbar {
-    width: 32px;
-}
+        ::-webkit-scrollbar {
+            width: 32px;
+        }
 
-::-webkit-scrollbar-track {
-    background: #eee;
-    border-left:1px solid #111;
-}
+        ::-webkit-scrollbar-track {
+            background: #eee;
+            border-left:1px solid #111;
+        }
 
-::-webkit-scrollbar-thumb {
-    background-color: #555;
-}
+        ::-webkit-scrollbar-thumb {
+            background-color: #555;
+        }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #333;
-}
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333;
+        }
 
-/* Scrollbar para Firefox */
-body {
-    scrollbar-width: thin;
-    scrollbar-color: #555 #eee;
-}
+        /* Scrollbar para Firefox */
+        body {
+            scrollbar-width: thin;
+            scrollbar-color: #555 #eee;
+        }
         input[type="file"], input[type="text"] { margin-bottom: 10px; }
         ul { list-style-type: none; padding-left: 0; }
         li { padding: 5px 0; border-bottom: 1px solid #ccc; }
@@ -69,34 +71,34 @@ body {
         }
 
        #department-filter {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px; /* Mantenha a margem inferior para separar do conteúdo abaixo */
-    border-bottom: 1px solid #eee; /* Mantenha a borda inferior, se desejado */
-    padding-bottom: 10px; /* Mantenha o padding inferior, se desejado */
-}
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
 
-#department-filter label {
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-right: 0;
-    cursor: pointer;
-    display: flex; /* Use flexbox para alinhar os itens */
-    align-items: center; /* Alinha verticalmente os itens ao centro */
-    margin-left: 0;
-    padding-left: 0; /* Remova o padding esquerdo anterior */
-}
+        #department-filter label {
+            margin-top: 0;
+            margin-bottom: 0;
+            margin-right: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin-left: 0;
+            padding-left: 0;
+        }
 
-#department-filter input[type="checkbox"] {
-    margin-top: 0;
-    margin-bottom: 0;
-    vertical-align: middle;
-    margin-right: 5px; /* Adiciona um pequeno espaço entre o checkbox e o nome */
-}
+        #department-filter input[type="checkbox"] {
+            margin-top: 0;
+            margin-bottom: 0;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
 
-#department-filter br {
-    display: none;
-}
+        #department-filter br {
+            display: none;
+        }
 
         .department-list {
             list-style-type: none;
@@ -164,78 +166,78 @@ body {
         }
         
         #department-filter button {
-        width:200px;
-    padding: 8px 12px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f8f8f8;
-    cursor: pointer;
-    margin-bottom: 10px;
-    transition: background-color 0.3s ease;
-    margin-top:10px;
-}
+            width:200px;
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f8f8f8;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background-color 0.3s ease;
+            margin-top:10px;
+        }
 
-#department-filter button:hover {
-    background-color: #e0e0e0;
-}
+        #department-filter button:hover {
+            background-color: #e0e0e0;
+        }
 
-#department-filter button:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-.voltar-tela-inicial {
- display: flex;
-  flex-direction: row;
-    position: fixed;
-  top: 0px;
-  left: 0px;
-right:0;
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  z-index: 999;
-  flex-wrap: wrap; /* Para permitir quebra de linha */
-  background:#222;
-  padding:10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  justify-content: center;
-}
+        #department-filter button:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        .voltar-tela-inicial {
+            display: flex;
+            flex-direction: row;
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            right:0;
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            z-index: 999;
+            flex-wrap: wrap; /* Para permitir quebra de linha */
+            background:#222;
+            padding:10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            justify-content: center;
+        }
 
 
-/* Estilo base compartilhado entre os botões */
-.voltar-tela-inicial button {
-  width: 50px;
-  height: 50px;
-  background: #eee;
-  border: 2px solid #000;
-  font-size: 24px;
-  cursor: pointer;
-  border-radius: 50%;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: black;
-}
+        /* Estilo base compartilhado entre os botões */
+        .voltar-tela-inicial button {
+            width: 50px;
+            height: 50px;
+            background: #eee;
+            border: 2px solid #000;
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: black;
+        }
 
     </style>
 </head>
 <body>
-<div class="voltar-tela-inicial">
-   <button onclick="window.location.href='https://armandodecampos.github.io/Ferramentas-Trabalho/'">
-      <i class="fas fa-home"></i>
-    </button>
-</div>
-<br>
-<br>
-<br>
-<br>
-<h3>Relatório de presença de pessoas por dia (Mútiplos aquivos)</h3>
-<button class="upload-label" onclick="window.open('https://armandodecampos.github.io/Relatorio-de-prese-a-de-pessoas-por-dia/', '_blank');">Clique aqui</button>
-<br>
-<br>
+    <div class="voltar-tela-inicial">
+        <button onclick="window.location.href='https://armandodecampos.github.io/Ferramentas-Trabalho/'">
+            <i class="fas fa-home"></i>
+        </button>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <h3>Relatório de presença de pessoas por dia (Mútiplos aquivos)</h3>
+    <button class="upload-label" onclick="window.open('https://armandodecampos.github.io/Relatorio-de-prese-a-de-pessoas-por-dia/', '_blank');">Clique aqui</button>
+    <br>
+    <br>
     <h3>Pesquisa de pessoas por período</h3>
     <input type="file" id="upload" accept=".xls,.xlsx" />
     <label for="upload" class="upload-label">Selecionar arquivo Excel</label>
@@ -244,7 +246,7 @@ right:0;
     <br>
     <hr>
     <h3>Relatório de todos as pessoas por departamento agrupado para o Global</h3>
-   <table id="department-summary">
+    <table id="department-summary">
         <thead>
             <tr>
                 <th>Departamento</th>
@@ -287,372 +289,406 @@ right:0;
     <hr>
     <h2>Relatório de Visitas por Data e Departamento</h2>
     <div id="date-department-report">
-        </div>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <hr>
-        <h2>Pesquisar por dados</h2>
-        <p id="count">Total de pessoas: 0</p>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <hr>
+    <h2>Pesquisar por dados</h2>
+    <p id="count">Total de pessoas: 0</p>
     <div id="department-filter">
         <strong>Filtrar por Departamento:</strong><br><br><br><br>
     </div>
     <input type="search" id="search" placeholder="🔍 Pesquisar..." class="search-input" />
     <button id="export-excel" style="padding: 10px 15px; font-size: 16px; border: none; border-radius: 5px; background-color: #28a745; color: white; cursor: pointer; margin-top: 20px;">Exportar para Excel (Em teste)</button>
     <ul id="list" class="department-list"></ul>
+
     <script>
-    const uploadInput = document.getElementById('upload');
-    const searchInput = document.getElementById('search');
-    const list = document.getElementById('list');
-    const departmentFilterDiv = document.getElementById('department-filter');
-    const departmentSummaryTable = document.getElementById('department-summary');
-    const specificDepartmentSummaryTable = document.getElementById('specific-department-summary');
-    const exportExcelBtn = document.getElementById('export-excel');
+        // Mantenha todas as suas variáveis e lógica como estão
+        const uploadInput = document.getElementById('upload');
+        const searchInput = document.getElementById('search');
+        const list = document.getElementById('list');
+        const departmentFilterDiv = document.getElementById('department-filter');
+        const departmentSummaryTable = document.getElementById('department-summary');
+        const specificDepartmentSummaryTable = document.getElementById('specific-department-summary');
+        const exportExcelBtn = document.getElementById('export-excel');
+        const fileNameElement = document.getElementById('file-name');
+        const countElement = document.getElementById('count');
+        const dateDepartmentReportDiv = document.getElementById('date-department-report');
 
-    let allItemsByDepartment = {};
-    let departmentCheckboxes = {};
-    let json = []; // ADICIONADO
+        let allItemsByDepartment = {};
+        let departmentCheckboxes = {};
+        let json = []; 
 
-    const departmentMapping = {
-        "Visitantes": "Visitante",
-        "Ab-inbev": "AGT",
-        "Prestador de Serviços": "Prestador de Serviços",
-        "CDD Campinas": "CDD",
-        "Camila Murakawa": "AGT",
-        "Felipe Aragão": "AGT",
-        "Gabriel Filipecki": "AGT",
-        "Luis Veronesi": "AGT",
-        "Rafael Pacini": "AGT",
-        "Sonia Fuscaldi": "AGT",
-        "Sergio Vezza": "GROWTH",
-        "Fabio Mazza": "AGT",
-        "Ronaldo Fiorito": "AGT",
-        "Marcelo Rentz": "AGT",
-        "Goran Djuric": "AGT",
-        "AC": "Visitante",
-        "CSC": "CSC",
-        "Carlos Nobre": "AGT",
-        "Fernando Leite de Campos": "AGT",
-        "Mauricio Nogueira Soufen": "AGT",
-        "Alexandre Van Wonterghem": "AGT",
-        "Keith Davies": "AGT",
-        "Lojista - Feirinha": "Visitante",
-        "Terceiros Growth": "GROWTH",
-        "Tech": "GROWTH",
-        "Bees Tech": "GROWTH",
-        "Growth Group": "GROWTH"
-    };
-
-    const specificDepartments = ["CDD Campinas", "Sergio Vezza", "Terceiros Growth", "Bees Tech", "Growth Group"];
-
-    // Normalizar textos (acentos e caixa baixa)
-    function normalizeText(text) {
-        return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    }
-
-    // Upload único
-    uploadInput.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        document.getElementById('file-name').textContent = `📂 Arquivo selecionado: ${file?.name || ''}`;
-        if (!file) return;
-
-        const data = await file.arrayBuffer();
-        const workbook = XLSX.read(data, { type: 'array' });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-        const itemsByDept = {};
-        const uniqueIds = new Set();
-
-        json.slice(2).forEach(row => {
-            const uniqueKey = row[6]; // Coluna G
-            if (!uniqueKey) return; // Ignora linhas sem ID
-
-            const department = row[11] && row[11].trim() ? row[11].trim() : "Portaria Virtual";
-
-            if (!uniqueIds.has(uniqueKey)) {
-                uniqueIds.add(uniqueKey);
-
-                const nome = row[7] || "";
-                const sobrenome = row[8] || "";
-                const itemText = `${nome} ${sobrenome} - ${uniqueKey}`;
-
-                if (!itemsByDept[department]) itemsByDept[department] = [];
-                itemsByDept[department].push(itemText);
-            }
-        });
-
-        allItemsByDepartment = itemsByDept;
-        renderDepartmentCheckboxes(Object.keys(allItemsByDepartment).sort());
-        filterAndRenderList();
-        updateDepartmentSummary(Object.values(allItemsByDepartment).flat());
-        updateSpecificDepartmentSummary(Object.values(allItemsByDepartment).flat());
-        generateDateDepartmentReport();
-    });
-
-    searchInput.addEventListener('input', filterAndRenderList);
-
-    function renderDepartmentCheckboxes(departments) {
-        departmentFilterDiv.innerHTML = '<strong>Filtrar por Departamento:</strong><br><br>';
-
-        const checkAllButton = document.createElement('button');
-        checkAllButton.textContent = 'Marcar Todos';
-        checkAllButton.onclick = () => {
-            Object.values(departmentCheckboxes).forEach(cb => cb.checked = true);
-            filterAndRenderList();
+        const departmentMapping = {
+            "Visitantes": "Visitante",
+            "Ab-inbev": "AGT",
+            "Prestador de Serviços": "Prestador de Serviços",
+            "CDD Campinas": "CDD",
+            "Camila Murakawa": "AGT",
+            "Felipe Aragão": "AGT",
+            "Gabriel Filipecki": "AGT",
+            "Luis Veronesi": "AGT",
+            "Rafael Pacini": "AGT",
+            "Sonia Fuscaldi": "AGT",
+            "Sergio Vezza": "GROWTH",
+            "Fabio Mazza": "AGT",
+            "Ronaldo Fiorito": "AGT",
+            "Marcelo Rentz": "AGT",
+            "Goran Djuric": "AGT",
+            "AC": "Visitante",
+            "CSC": "CSC",
+            "Carlos Nobre": "AGT",
+            "Fernando Leite de Campos": "AGT",
+            "Mauricio Nogueira Soufen": "AGT",
+            "Alexandre Van Wonterghem": "AGT",
+            "Keith Davies": "AGT",
+            "Lojista - Feirinha": "Visitante",
+            "Terceiros Growth": "GROWTH",
+            "Tech": "GROWTH",
+            "Bees Tech": "GROWTH",
+            "Growth Group": "GROWTH"
         };
-        departmentFilterDiv.appendChild(checkAllButton);
 
-        const uncheckAllButton = document.createElement('button');
-        uncheckAllButton.textContent = 'Desmarcar Todos';
-        uncheckAllButton.onclick = () => {
-            Object.values(departmentCheckboxes).forEach(cb => cb.checked = false);
-            filterAndRenderList();
-        };
-        departmentFilterDiv.appendChild(uncheckAllButton);
-        departmentFilterDiv.appendChild(document.createElement('br'));
-        departmentFilterDiv.appendChild(document.createElement('br'));
+        const specificDepartments = ["CDD Campinas", "Sergio Vezza", "Terceiros Growth", "Bees Tech", "Growth Group"];
 
-        departmentCheckboxes = {};
-        departments.forEach(dept => {
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.checked = true;
-            checkbox.onchange = filterAndRenderList;
+        // Normalizar textos (acentos e caixa baixa)
+        function normalizeText(text) {
+            return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
 
-            const label = document.createElement('label');
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(` ${dept} (${allItemsByDepartment[dept]?.length || 0})`));
+        // Upload único
+        uploadInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            fileNameElement.textContent = `📂 Arquivo selecionado: ${file?.name || ''}`;
+            if (!file) return;
 
-            departmentFilterDiv.appendChild(label);
-            departmentFilterDiv.appendChild(document.createElement('br'));
+            try {
+                const data = await file.arrayBuffer();
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-            departmentCheckboxes[dept] = checkbox;
-        });
-    }
+                // Limpa os dados anteriores antes de processar os novos
+                allItemsByDepartment = {};
+                departmentCheckboxes = {};
 
-    function filterAndRenderList() {
-        list.innerHTML = '';
-        let total = 0;
-        for (const dept in allItemsByDepartment) {
-            if (departmentCheckboxes[dept]?.checked) {
-                const filteredItems = allItemsByDepartment[dept].filter(item => {
-                    const searchWords = normalizeText(searchInput.value).split(/\s+/).filter(Boolean);
-                    const itemWords = normalizeText(item);
-                    return searchWords.every(word => itemWords.includes(word));
+                const itemsByDept = {};
+                const uniqueIds = new Set();
+                
+                // AJUSTE: Mudei para slice(2) para pular a linha do cabeçalho
+                // e evitar que "Nome do Departamento" seja lido como um dado.
+                json.slice(2).forEach(row => {
+                    // Verificando a presença de dados nas colunas
+                    const uniqueKey = row[6]; // Coluna G
+                    const departmentColumn = row[11]; // Coluna L
+                    
+                    if (!uniqueKey) return; // Ignora linhas sem ID
+                    
+                    const department = departmentColumn && departmentColumn.trim() ? departmentColumn.trim() : "Portaria Virtual";
+                    
+                    // AJUSTE: Adiciona uma verificação para ignorar o cabeçalho do departamento, caso ele apareça
+                    if (department === "Nome do Departamento") return;
+
+
+                    if (!uniqueIds.has(uniqueKey)) {
+                        uniqueIds.add(uniqueKey);
+                        const nome = row[7] || "";
+                        const sobrenome = row[8] || "";
+                        const itemText = `${nome} ${sobrenome} - ${uniqueKey}`;
+
+                        if (!itemsByDept[department]) {
+                            itemsByDept[department] = [];
+                        }
+                        itemsByDept[department].push(itemText);
+                    }
                 });
 
-                if (filteredItems.length) {
-                    const li = document.createElement('li');
-                    li.innerHTML = `<strong>${dept} (${filteredItems.length})</strong>`;
-                    const ul = document.createElement('ul');
-                    filteredItems.forEach(item => {
-                        const itemLi = document.createElement('li');
-                        itemLi.textContent = item;
-                        ul.appendChild(itemLi);
-                    });
-                    li.appendChild(ul);
-                    list.appendChild(li);
-                    total += filteredItems.length;
-                }
-            }
-        }
-        document.getElementById('count').textContent = `Total de pessoas: ${total}`;
-    }
+                allItemsByDepartment = itemsByDept;
+                // Renderiza os checkboxes dos departamentos encontrados no arquivo
+                renderDepartmentCheckboxes(Object.keys(allItemsByDepartment).sort());
+                // Filtra e renderiza a lista inicial
+                filterAndRenderList();
+                // Atualiza os resumos das tabelas
+                updateDepartmentSummary(Object.values(allItemsByDepartment).flat());
+                updateSpecificDepartmentSummary(Object.values(allItemsByDepartment).flat());
+                // Gera o relatório de visitas por data
+                generateDateDepartmentReport();
 
-    function updateDepartmentSummary(items) {
-        const tbody = departmentSummaryTable.querySelector('tbody');
-        const tfoot = departmentSummaryTable.querySelector('tfoot td:last-child');
-        tbody.innerHTML = '';
-
-        const counts = {};
-        items.forEach(item => {
-            let dept = Object.keys(allItemsByDepartment).find(d => allItemsByDepartment[d].includes(item)) || 'Não Informado';
-            const mapped = departmentMapping[dept] || dept;
-            counts[mapped] = (counts[mapped] || 0) + 1;
-        });
-
-        // Ordenar os departamentos alfabeticamente
-        const sortedDepartments = Object.keys(counts).sort();
-
-        for (const dept of sortedDepartments) {
-            const row = tbody.insertRow();
-            row.insertCell().textContent = dept;
-            row.insertCell().textContent = counts[dept];
-        }
-        tfoot.textContent = items.length;
-    }
-
-    function updateSpecificDepartmentSummary(items) {
-        const tbody = specificDepartmentSummaryTable.querySelector('tbody');
-        const tfoot = specificDepartmentSummaryTable.querySelector('tfoot td:last-child');
-        tbody.innerHTML = '';
-
-        const counts = {};
-        specificDepartments.forEach(d => counts[d] = 0);
-        items.forEach(item => {
-            let dept = Object.keys(allItemsByDepartment).find(d => allItemsByDepartment[d].includes(item)) || 'Não Informado';
-            if (specificDepartments.includes(dept)) counts[dept]++;
-        });
-
-        // Ordenar os departamentos específicos alfabeticamente
-        const sortedSpecificDepartments = [...specificDepartments].sort();
-
-        sortedSpecificDepartments.forEach(dept => {
-            const row = tbody.insertRow();
-            row.insertCell().textContent = dept;
-            row.insertCell().textContent = counts[dept];
-        });
-        tfoot.textContent = sortedSpecificDepartments.reduce((sum, d) => sum + counts[d], 0);
-    }
-
-    // Formatar data para dd/mm/aaaa
-    function formatDate(dateString) {
-        if (!dateString) return '';
-        const parts = dateString.split('-');
-        if (parts.length === 3) {
-            return `${parts[2]}/${parts[1]}/${parts[0]}`;
-        }
-        return dateString;
-    }
-
-    function generateDateDepartmentReport() {
-    const selectedDepartments = Object.keys(departmentCheckboxes).filter(dept => departmentCheckboxes[dept].checked);
-    const container = document.getElementById('date-department-report');
-
-    if (!selectedDepartments.length) {
-        container.innerHTML = '<p>Selecione pelo menos um departamento.</p>';
-        return;
-    }
-
-    const departmentDateCounts = {};
-    const allDates = new Set();
-    const processedEntries = new Set();
-    const totalPorData = {};
-
-    if (json && json.length > 2) {
-        json.slice(2).forEach(row => {
-            const uniqueKey = row[6];
-            if (!uniqueKey) return;
-
-            const department = row[11] && row[11].trim() ? row[11].trim() : "Portaria Virtual";
-            let dateValue = row[1];
-
-            if (typeof dateValue === 'number') {
-                dateValue = XLSX.SSF.format('yyyy-mm-dd', dateValue);
-            } else if (typeof dateValue === 'string') {
-                dateValue = dateValue.split(' ')[0];
-            }
-
-            const entryIdentifier = `${uniqueKey}-${dateValue}`;
-
-            if (selectedDepartments.includes(department) && !processedEntries.has(entryIdentifier)) {
-                processedEntries.add(entryIdentifier);
-                if (!departmentDateCounts[department]) departmentDateCounts[department] = {};
-                departmentDateCounts[department][dateValue] = (departmentDateCounts[department][dateValue] || 0) + 1;
-                allDates.add(dateValue);
-                totalPorData[dateValue] = (totalPorData[dateValue] || 0) + 1;
+            } catch (error) {
+                console.error("Erro ao ler o arquivo Excel:", error);
+                alert("Ocorreu um erro ao ler o arquivo. Por favor, verifique se o arquivo está no formato .xls ou .xlsx e se as colunas estão corretas.");
+                fileNameElement.textContent = 'Erro ao ler o arquivo.';
+                // Limpa a interface em caso de erro
+                list.innerHTML = '';
+                departmentFilterDiv.innerHTML = '';
+                departmentSummaryTable.querySelector('tbody').innerHTML = '';
+                specificDepartmentSummaryTable.querySelector('tbody').innerHTML = '';
+                dateDepartmentReportDiv.innerHTML = '';
+                countElement.textContent = 'Total de pessoas: 0';
             }
         });
-    }
 
-    const sortedDates = Array.from(allDates).sort();
+        // Adiciona um evento de input para a pesquisa
+        searchInput.addEventListener('input', filterAndRenderList);
 
-    // Criação da tabela
-    let reportHTML = '<table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif;">';
-    reportHTML += '<thead><tr>';
-    reportHTML += '<th style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px;">Departamento</th>';
-    sortedDates.forEach(date => {
-        reportHTML += `<th style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px;">${formatDate(date)}</th>`;
-    });
-    reportHTML += '<th style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px;">Total</th>';
-    reportHTML += '</tr></thead><tbody>';
+        function renderDepartmentCheckboxes(departments) {
+            departmentFilterDiv.innerHTML = '<strong>Filtrar por Departamento:</strong><br><br>';
 
-    selectedDepartments.forEach(dept => {
-        reportHTML += '<tr>';
-        reportHTML += `<td style="border: 1px solid #ddd; padding: 8px;">${dept}</td>`;
-        let rowTotal = 0;
-        sortedDates.forEach(date => {
-            const count = departmentDateCounts[dept]?.[date] || 0;
-            reportHTML += `<td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${count}</td>`;
-            rowTotal += count;
-        });
-        reportHTML += `<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">${rowTotal}</td>`;
-        reportHTML += '</tr>';
-    });
+            const checkAllButton = document.createElement('button');
+            checkAllButton.textContent = 'Marcar Todos';
+            checkAllButton.onclick = () => {
+                Object.values(departmentCheckboxes).forEach(cb => cb.checked = true);
+                filterAndRenderList();
+            };
+            departmentFilterDiv.appendChild(checkAllButton);
 
-    // Linha de total por data
-    reportHTML += '<tfoot><tr>';
-    reportHTML += '<td style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px; font-weight: bold;">Total</td>';
-    sortedDates.forEach(date => {
-        reportHTML += `<td style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px; text-align: center; font-weight: bold;">${totalPorData[date] || 0}</td>`;
-    });
-    const totalGeral = Object.values(totalPorData).reduce((sum, count) => sum + count, 0);
-    reportHTML += `<td style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px; text-align: center; font-weight: bold;">${totalGeral}</td>`;
-    reportHTML += '</tr></tfoot>';
+            const uncheckAllButton = document.createElement('button');
+            uncheckAllButton.textContent = 'Desmarcar Todos';
+            uncheckAllButton.onclick = () => {
+                Object.values(departmentCheckboxes).forEach(cb => cb.checked = false);
+                filterAndRenderList();
+            };
+            departmentFilterDiv.appendChild(uncheckAllButton);
+            departmentFilterDiv.appendChild(document.createElement('br'));
+            departmentFilterDiv.appendChild(document.createElement('br'));
 
-    reportHTML += '</tbody></table>';
-    container.innerHTML = reportHTML || '<p>Nenhum dado encontrado para os departamentos selecionados.</p>';
-}
+            departmentCheckboxes = {};
+            departments.forEach(dept => {
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = true;
+                checkbox.onchange = filterAndRenderList;
 
-exportExcelBtn.addEventListener('click', () => {
-    const selectedDepartments = Object.keys(departmentCheckboxes).filter(dept => departmentCheckboxes[dept].checked);
-    const dataToExport = [];
+                const label = document.createElement('label');
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(` ${dept} (${allItemsByDepartment[dept]?.length || 0})`));
 
-    // Adicionar cabeçalho
-    dataToExport.push(['Departamento', 'Nome', 'ID Pessoal']);
+                departmentFilterDiv.appendChild(label);
+                departmentFilterDiv.appendChild(document.createElement('br'));
 
-    const registrosPorDepartamento = {};
-
-    // Processar os dados, incluindo "Portaria Virtual" para departamentos vazios
-    for (const dept in allItemsByDepartment) {
-        const departamento = selectedDepartments.includes(dept) ? dept : null;
-        if (departamento) {
-            allItemsByDepartment[dept].forEach(item => {
-                const partes = item.split(' - ');
-                const nome = partes[0] || '';
-                const cpf = partes[1] || '';
-                registrosPorDepartamento[departamento] = registrosPorDepartamento[departamento] || [];
-                registrosPorDepartamento[departamento].push({ nome, cpf });
+                departmentCheckboxes[dept] = checkbox;
             });
         }
-    }
 
-    // Adicionar dados ao array dataToExport
-    for (const departamento in registrosPorDepartamento) {
-        registrosPorDepartamento[departamento].forEach(registro => {
-            dataToExport.push([departamento, registro.nome, registro.cpf]);
+        function filterAndRenderList() {
+            list.innerHTML = '';
+            let total = 0;
+            for (const dept in allItemsByDepartment) {
+                if (departmentCheckboxes[dept]?.checked) {
+                    const filteredItems = allItemsByDepartment[dept].filter(item => {
+                        const searchWords = normalizeText(searchInput.value).split(/\s+/).filter(Boolean);
+                        const itemWords = normalizeText(item);
+                        return searchWords.every(word => itemWords.includes(word));
+                    });
+
+                    if (filteredItems.length) {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<strong>${dept} (${filteredItems.length})</strong>`;
+                        const ul = document.createElement('ul');
+                        filteredItems.forEach(item => {
+                            const itemLi = document.createElement('li');
+                            itemLi.textContent = item;
+                            ul.appendChild(itemLi);
+                        });
+                        li.appendChild(ul);
+                        list.appendChild(li);
+                        total += filteredItems.length;
+                    }
+                }
+            }
+            countElement.textContent = `Total de pessoas: ${total}`;
+        }
+
+        function updateDepartmentSummary(items) {
+            const tbody = departmentSummaryTable.querySelector('tbody');
+            const tfoot = departmentSummaryTable.querySelector('tfoot td:last-child');
+            tbody.innerHTML = '';
+
+            const counts = {};
+            items.forEach(item => {
+                let dept = Object.keys(allItemsByDepartment).find(d => allItemsByDepartment[d].includes(item)) || 'Não Informado';
+                const mapped = departmentMapping[dept] || dept;
+                counts[mapped] = (counts[mapped] || 0) + 1;
+            });
+
+            // Ordenar os departamentos alfabeticamente
+            const sortedDepartments = Object.keys(counts).sort();
+
+            for (const dept of sortedDepartments) {
+                const row = tbody.insertRow();
+                row.insertCell().textContent = dept;
+                row.insertCell().textContent = counts[dept];
+            }
+            tfoot.textContent = items.length;
+        }
+
+        function updateSpecificDepartmentSummary(items) {
+            const tbody = specificDepartmentSummaryTable.querySelector('tbody');
+            const tfoot = specificDepartmentSummaryTable.querySelector('tfoot td:last-child');
+            tbody.innerHTML = '';
+
+            const counts = {};
+            specificDepartments.forEach(d => counts[d] = 0);
+            items.forEach(item => {
+                let dept = Object.keys(allItemsByDepartment).find(d => allItemsByDepartment[d].includes(item)) || 'Não Informado';
+                if (specificDepartments.includes(dept)) counts[dept]++;
+            });
+
+            // Ordenar os departamentos específicos alfabeticamente
+            const sortedSpecificDepartments = [...specificDepartments].sort();
+
+            sortedSpecificDepartments.forEach(dept => {
+                const row = tbody.insertRow();
+                row.insertCell().textContent = dept;
+                row.insertCell().textContent = counts[dept];
+            });
+            tfoot.textContent = sortedSpecificDepartments.reduce((sum, d) => sum + counts[d], 0);
+        }
+
+        // Formatar data para dd/mm/aaaa
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const parts = dateString.split('-');
+            if (parts.length === 3) {
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            return dateString;
+        }
+
+        function generateDateDepartmentReport() {
+            const selectedDepartments = Object.keys(departmentCheckboxes).filter(dept => departmentCheckboxes[dept].checked);
+            const container = document.getElementById('date-department-report');
+
+            if (!selectedDepartments.length) {
+                container.innerHTML = '<p>Selecione pelo menos um departamento.</p>';
+                return;
+            }
+
+            const departmentDateCounts = {};
+            const allDates = new Set();
+            const processedEntries = new Set();
+            const totalPorData = {};
+
+            if (json && json.length > 2) {
+                json.slice(2).forEach(row => {
+                    const uniqueKey = row[6];
+                    if (!uniqueKey) return;
+
+                    const department = row[11] && row[11].trim() ? row[11].trim() : "Portaria Virtual";
+                    let dateValue = row[1];
+
+                    if (typeof dateValue === 'number') {
+                        dateValue = XLSX.SSF.format('yyyy-mm-dd', dateValue);
+                    } else if (typeof dateValue === 'string') {
+                        dateValue = dateValue.split(' ')[0];
+                    }
+
+                    const entryIdentifier = `${uniqueKey}-${dateValue}`;
+
+                    if (selectedDepartments.includes(department) && !processedEntries.has(entryIdentifier)) {
+                        processedEntries.add(entryIdentifier);
+                        if (!departmentDateCounts[department]) departmentDateCounts[department] = {};
+                        departmentDateCounts[department][dateValue] = (departmentDateCounts[department][dateValue] || 0) + 1;
+                        allDates.add(dateValue);
+                        totalPorData[dateValue] = (totalPorData[dateValue] || 0) + 1;
+                    }
+                });
+            }
+
+            const sortedDates = Array.from(allDates).sort();
+
+            // Criação da tabela
+            let reportHTML = '<table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif;">';
+            reportHTML += '<thead><tr>';
+            reportHTML += '<th style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px;">Departamento</th>';
+            sortedDates.forEach(date => {
+                reportHTML += `<th style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px;">${formatDate(date)}</th>`;
+            });
+            reportHTML += '<th style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px;">Total</th>';
+            reportHTML += '</tr></thead><tbody>';
+
+            selectedDepartments.forEach(dept => {
+                reportHTML += '<tr>';
+                reportHTML += `<td style="border: 1px solid #ddd; padding: 8px;">${dept}</td>`;
+                let rowTotal = 0;
+                sortedDates.forEach(date => {
+                    const count = departmentDateCounts[dept]?.[date] || 0;
+                    reportHTML += `<td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${count}</td>`;
+                    rowTotal += count;
+                });
+                reportHTML += `<td style="border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">${rowTotal}</td>`;
+                reportHTML += '</tr>';
+            });
+
+            // Linha de total por data
+            reportHTML += '<tfoot><tr>';
+            reportHTML += '<td style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px; font-weight: bold;">Total</td>';
+            sortedDates.forEach(date => {
+                reportHTML += `<td style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px; text-align: center; font-weight: bold;">${totalPorData[date] || 0}</td>`;
+            });
+            const totalGeral = Object.values(totalPorData).reduce((sum, count) => sum + count, 0);
+            reportHTML += `<td style="border: 1px solid #ccc; background: #f5f5f5; padding: 10px; text-align: center; font-weight: bold;">${totalGeral}</td>`;
+            reportHTML += '</tr></tfoot>';
+
+            reportHTML += '</tbody></table>';
+            container.innerHTML = reportHTML || '<p>Nenhum dado encontrado para os departamentos selecionados.</p>';
+        }
+
+        exportExcelBtn.addEventListener('click', () => {
+            const selectedDepartments = Object.keys(departmentCheckboxes).filter(dept => departmentCheckboxes[dept].checked);
+            const dataToExport = [];
+
+            // Adicionar cabeçalho
+            dataToExport.push(['Departamento', 'Nome', 'ID Pessoal']);
+
+            const registrosPorDepartamento = {};
+
+            // Processar os dados, incluindo "Portaria Virtual" para departamentos vazios
+            for (const dept in allItemsByDepartment) {
+                const departamento = selectedDepartments.includes(dept) ? dept : null;
+                if (departamento) {
+                    allItemsByDepartment[dept].forEach(item => {
+                        const partes = item.split(' - ');
+                        const nome = partes[0] || '';
+                        const cpf = partes[1] || '';
+                        registrosPorDepartamento[departamento] = registrosPorDepartamento[departamento] || [];
+                        registrosPorDepartamento[departamento].push({ nome, cpf });
+                    });
+                }
+            }
+
+            // Adicionar dados ao array dataToExport
+            for (const departamento in registrosPorDepartamento) {
+                registrosPorDepartamento[departamento].forEach(registro => {
+                    dataToExport.push([departamento, registro.nome, registro.cpf]);
+                });
+            }
+
+            // Adicionar registros de "Portaria Virtual"
+            if (allItemsByDepartment["Portaria Virtual"]) {
+                allItemsByDepartment["Portaria Virtual"].forEach(item => {
+                    const partes = item.split(' - ');
+                    const nome = partes[0] || '';
+                    const cpf = partes[1] || '';
+                    dataToExport.push(['Portaria Virtual', nome, cpf]);
+                });
+            }
+
+            // Criar um novo workbook
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet(dataToExport);
+
+            // Adicionar a worksheet ao workbook
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Relatório');
+
+            // Salvar o arquivo
+            XLSX.writeFile(workbook, 'relatorio_departamentos.xlsx');
         });
-    }
 
-    // Adicionar registros de "Portaria Virtual"
-    if (allItemsByDepartment["Portaria Virtual"]) {
-        allItemsByDepartment["Portaria Virtual"].forEach(item => {
-            const partes = item.split(' - ');
-            const nome = partes[0] || '';
-            const cpf = partes[1] || '';
-            dataToExport.push(['Portaria Virtual', nome, cpf]);
-        });
-    }
-
-    // Criar um novo workbook
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.aoa_to_sheet(dataToExport);
-
-    // Adicionar a worksheet ao workbook
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Relatório');
-
-    // Salvar o arquivo
-    XLSX.writeFile(workbook, 'relatorio_departamentos.xlsx');
-});
-
-
-
-</script>
-
-
+    </script>
 </body>
-
+</html>
