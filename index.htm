@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Adicionando a biblioteca XLSX para ler arquivos Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <!-- Adicionando a biblioteca html2canvas para exportar imagens -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
         /* Scrollbar para navegadores WebKit */
@@ -259,6 +261,9 @@
             </tr>
         </tfoot>
     </table>
+    <button id="export-global-image" onclick="exportGlobalReportAsImage()" style="padding: 10px 15px; font-size: 16px; border: none; border-radius: 5px; background-color: #007bff; color: white; cursor: pointer; margin-top: 15px;">
+        <i class="fas fa-image"></i> Exportar Imagem
+    </button>
     <br>
     <br>
     <br>
@@ -685,6 +690,117 @@
             // Salvar o arquivo
             XLSX.writeFile(workbook, 'relatorio_departamentos.xlsx');
         });
+
+
+        function exportGlobalReportAsImage() {
+            // Check if there are rows in the table
+            const tbody = departmentSummaryTable.querySelector('tbody');
+            if (!tbody || tbody.rows.length === 0) {
+                alert('Não há dados no relatório para exportar. Por favor, carregue um arquivo Excel primeiro.');
+                return;
+            }
+
+            // Get current date and time
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+
+            const dateString = `${day}/${month}/${year}`;
+            const timeString = `${hours}h${minutes}`;
+
+            // Create temporary container for screenshot
+            const tempContainer = document.createElement('div');
+            tempContainer.style.position = 'absolute';
+            tempContainer.style.left = '-9999px';
+            tempContainer.style.top = '-9999px';
+            tempContainer.style.backgroundColor = '#ffffff';
+            tempContainer.style.padding = '40px';
+            tempContainer.style.fontFamily = 'Arial, sans-serif';
+            tempContainer.style.width = '600px';
+            tempContainer.style.boxSizing = 'border-box';
+
+            // Header Section
+            const headerDiv = document.createElement('div');
+            headerDiv.style.textAlign = 'center';
+            headerDiv.style.marginBottom = '40px';
+            headerDiv.style.color = '#000000';
+
+            const dateP = document.createElement('p');
+            dateP.style.fontSize = '32px';
+            dateP.style.fontWeight = 'bold';
+            dateP.style.margin = '0 0 10px 0';
+            dateP.textContent = `Data:${dateString}`;
+
+            const timeP = document.createElement('p');
+            timeP.style.fontSize = '32px';
+            timeP.style.fontWeight = 'bold';
+            timeP.style.margin = '0';
+            timeP.textContent = `Hora:${timeString}`;
+
+            headerDiv.appendChild(dateP);
+            headerDiv.appendChild(timeP);
+            tempContainer.appendChild(headerDiv);
+
+            // Clone Table
+            const tableClone = departmentSummaryTable.cloneNode(true);
+            tableClone.removeAttribute('id');
+            tableClone.style.width = '100%';
+            tableClone.style.borderCollapse = 'collapse';
+            tableClone.style.fontSize = '18px';
+            tableClone.style.color = '#000000';
+
+            // Apply explicit styles to the table cells (matching exemplo.jpg)
+            const headers = tableClone.querySelectorAll('th');
+            headers.forEach(th => {
+                th.style.border = '1px solid #ddd';
+                th.style.padding = '12px 10px';
+                th.style.textAlign = 'left';
+                th.style.backgroundColor = '#f0f0f0';
+                th.style.fontWeight = 'bold';
+            });
+
+            const cells = tableClone.querySelectorAll('td');
+            cells.forEach(td => {
+                td.style.border = '1px solid #ddd';
+                td.style.padding = '12px 10px';
+                td.style.textAlign = 'left';
+            });
+
+            const footerRows = tableClone.querySelectorAll('tfoot tr');
+            footerRows.forEach(tr => {
+                const tdElements = tr.querySelectorAll('td');
+                tdElements.forEach(td => {
+                    td.style.fontWeight = 'bold';
+                });
+            });
+
+            tempContainer.appendChild(tableClone);
+            document.body.appendChild(tempContainer);
+
+            // Use html2canvas to capture image
+            html2canvas(tempContainer, {
+                scale: 2, // Capture at high resolution
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                // Remove temporary container
+                document.body.removeChild(tempContainer);
+
+                // Download the canvas as image
+                const link = document.createElement('a');
+                link.download = `relatorio_global_${day}_${month}_${year}_${hours}h${minutes}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(error => {
+                console.error('Erro ao exportar imagem:', error);
+                if (document.body.contains(tempContainer)) {
+                    document.body.removeChild(tempContainer);
+                }
+                alert('Houve um erro ao tentar gerar a imagem.');
+            });
+        }
 
     </script>
 </body>
